@@ -1,0 +1,134 @@
+@startuml ZXSneakers
+entity Users {
+ email : String <PK>
+ --
+ name : String
+ password : String
+}
+
+entity Admin {
+ email : String <PK>
+ --
+ password : String
+}
+
+entity Products {
+ Id : Int <PK>
+ --
+ name : String
+ price : Number
+ stock : Number
+ created_at : Datatime
+ updated_at : Datetime
+}
+
+entity Product_sizes {
+ id_product : Int <FK>
+ --
+ size : number
+}
+
+entity Product_color {
+ id_product : Int <FK>
+ --
+ color : String
+}
+
+entity Product_images {
+ id_product : Int <FK>
+ --
+ name : String
+ format : String
+ data_image : BLOB
+}
+
+entity Addresses {
+ id : Int <PK>
+ --
+ email_user : String <FK>
+ --
+ no_telp : String
+ postal_code : Number
+ street : String
+ sub_distric : String
+ city : String
+ province : String
+ country : String
+}
+
+entity User_profile_image {
+ user_email : String <FK>
+ --
+ name : String
+ format : String
+ data_image : BLOB
+}
+
+entity Wallet {
+ id : Int <PK>
+ --
+ email_user : String <FK>
+ --
+ bank : String
+ name : String
+ account_number : Number
+}
+
+entity Bank {
+    kode : String <PK>
+    --
+    name : text
+}
+
+object Wishlistes {
+ email_user : String <FK>
+ id_product : Int <FK>
+}
+
+object Buy {
+ id_product : Int <FK>
+ email_user : String <FK>
+ id_wallet : Int <FK>
+ --
+ total : number
+ buying_time : Datetime
+}
+
+Users ||--o{ Addresses
+note on link
+    Have
+end note
+Users ||--o{ Wallet
+note on link
+    Have
+end note
+Users ||--o| User_profile_image
+note on link
+    Have
+end note
+Products ||--|{ Product_sizes
+note on link
+    Have
+end note
+Products ||--|{ Product_color
+note on link
+    Have
+end note
+Products ||--|{ Product_images
+note on link
+    Have
+end note
+Users }o-- Buy
+Bank }|-- Buy 
+note on link
+    Payment gateway
+end note
+Buy --|{ Products
+Users }o-- Wishlistes
+Wishlistes --|{ Products
+Admin --> Products
+note on link
+    Add, Delete, Update
+end note
+Wallet --> Bank
+@enduml

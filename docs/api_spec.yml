@@ -1,0 +1,497 @@
+openapi: "3.0.3"
+info:
+  title: ZXSneakers RESTful API
+  version: "1.0.0"
+  description: "OPENAPI for ZXSneakers RESTful API"
+  termsOfService: http://angga-r.netlify.app
+  contact:
+    name: Anggara
+    email: shalangga047@gmail.com
+    url: http://angga-r.netlify.app
+servers:
+  - url: https://api.zxsneakers.com/v1
+paths:
+  # ---- Users ----
+
+  /users/login:
+    post:
+      tags:
+        - Users
+      summary: Login User
+      requestBody:
+        description: Data login user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+            example:
+              email: example@gmail.com
+              password: secretPassword123
+      responses:
+        "200":
+          description: Login Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  name:
+                    type: string
+              example:
+                token: unique-token
+                name: Hamidah
+        "400":
+          description: Login Failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: string
+              examples:
+                email:
+                  value:
+                    errors: email not registered
+                password:
+                  value:
+                    errors: password is wrong
+
+  /users/register:
+    post:
+      tags:
+        - Users
+      summary: Register User
+      requestBody:
+        description: Data register user
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                name:
+                  type: string
+                password:
+                  type: string
+            example:
+              email: example@gmail.com
+              name: Hamidah
+              password: secretPassword123
+      responses:
+        "200":
+          description: Register success
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: string
+              examples:
+                email:
+                  value:
+                    errors: not a valid email
+                name:
+                  value:
+                    - errors: Name is too sort (min. 3 character)
+                    - errors: Name is too long (max. 20 character)
+                password:
+                  value:
+                    - errors: Password is too sort (min. 7 character)
+                    - errors: Password is too long (max. 100 character)
+        "409":
+          description: Email already used
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: string
+              example:
+                errors: Email already registered
+
+  /users/logout:
+    delete:
+      tags:
+        - Users
+      summary: Logout User API
+      parameters: [$ref: "#/components/parameters/Authorization"]
+      responses:
+        "200":
+          description: Logout success
+        "401":
+          description: Logout failed (unauthorize)
+
+  /users/password/update:
+    put:
+      tags:
+        - Users
+      summary: Update Password User
+      parameters: [$ref: "#/components/parameters/Authorization"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                newPassword:
+                  type: string
+                confirmPassword:
+                  type: string
+            example:
+              oldPassword: secretPassword123
+              newPassword: newSecretPassword456
+              confirmPassword: newSecretPassword456
+      responses:
+        "200":
+          description: Success change password
+        "400":
+          description: bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: string
+              examples:
+                oldPassword:
+                  value:
+                    errors: incorrect old password
+                newPassword:
+                  value:
+                    - errors: Password is too sort (min. 7 character)
+                    - errors: Password is too long (max. 100 character)
+                confirmPassword:
+                  value:
+                    errors: confirm password not same
+        "401":
+          description: unauthorize
+
+  /users/name/update:
+    put:
+      tags:
+        - Users
+      summary: Change Name User
+      parameters: [$ref: "#/components/parameters/Authorization"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newName:
+                  type: string
+            example:
+              newName: Anggara
+      responses:
+        "200":
+          description: change name success
+        "400":
+          description: change name failed (bad request)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: string
+              example:
+                - errors: Name is too sort (min. 3 character)
+                - errors: Name is too long (max. 20 character)
+        "401":
+          description: unauthorize
+
+  /users/avatar:
+    get:
+      tags:
+        - Users
+      summary: Get user avatar / profile picture
+      parameters: [$ref: "#/components/parameters/Authorization"]
+      responses:
+        "200":
+          description: Get avatar success
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+
+        "401":
+          description: unauthorize
+
+  /users/avatar/update:
+    put:
+      tags:
+        - Users
+      summary: Change avatar / profile picture
+      parameters: [$ref: "#/components/parameters/Authorization"]
+      description: "
+        format : jpg, jpeg, png |
+        max-size : 3MB
+        "
+      requestBody:
+        required: true
+        content:
+          image/*:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: Upload avatar success
+        "400":
+          description: Upload avatar failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: string
+              example:
+                - errors: not image file
+                - errors: format is not jpg, jpeg, png
+                - errors: size above 3MB
+        "401":
+          description: unauthorize
+
+  # ---- User Addresses ----
+
+  /users/address:
+    get:
+      tags:
+        - User Addresses
+      summary: Get all user address
+      parameters: [$ref: "#/components/parameters/Authorization"]
+
+      responses:
+        "200":
+          description: success get all data address
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    properties:
+                      no_telp:
+                        type: string
+                      postal_code:
+                        type: number
+                      street:
+                        type: string
+                      sub_distric:
+                        type: string
+                      city:
+                        type: string
+                      province:
+                        type: string
+                      country:
+                        type: string
+                  totalItem:
+                    type: integer
+                example:
+                  data:
+                    [
+                      {
+                        no_telp: "081222333444",
+                        postal_code: 45412,
+                        street: jalan mangga dua,
+                        sub_distric: cimanggu,
+                        city: bandung,
+                        province: jawa barat,
+                        country: indonesia,
+                      },
+                      {
+                        no_telp: "081555666777",
+                        postal_code: 45411,
+                        street: jalan mangga tiga,
+                        sub_distric: cimanggis,
+                        city: karawang,
+                        province: jawa barat,
+                        country: indonesia,
+                      },
+                    ]
+                  totalItem: 2
+
+        "400":
+          description: address is empty
+        "401":
+          description: unauthorize
+
+  /users/address/{addressId}:
+    get:
+      tags:
+        - User Addresses
+      summary: get user address by ID
+      parameters:
+        [
+          $ref: "#/components/parameters/Authorization",
+          $ref: "#/components/parameters/AddressId",
+        ]
+      responses:
+        "200":
+          description: Success get address by Id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AddressSchema"
+
+        "400":
+          description: address not found
+        "401":
+          description: unauthorize
+
+  /users/address/add:
+    post:
+      tags:
+        - User Addresses
+      summary: Add an address for user
+      parameters: [$ref: "#/components/parameters/Authorization"]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddressSchema"
+      responses:
+        "200":
+          description: Success add new address
+        "400":
+          description: Failed to add new address (if there is an empty value)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: string
+                example:
+                  errors: data cannot be empty
+        "401":
+          description: unauthorize
+
+  /users/address/update/{addressId}:
+    patch:
+      tags:
+        - User Addresses
+      summary: Update user address
+      parameters:
+        [
+          $ref: "#/components/parameters/Authorization",
+          $ref: "#/components/parameters/AddressId",
+        ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddressSchema"
+      responses:
+        "200":
+          description: Success update address
+        "400":
+          description: Failed to add new address (if there is an empty value)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: string
+                example:
+                  errors: data cannot be empty
+        "401":
+          description: unauthorize
+
+  /users/address/delete/{addressId}:
+    delete:
+      tags:
+        - User Addresses
+      summary: Delete user address
+      parameters:
+        [
+          $ref: "#/components/parameters/Authorization",
+          $ref: "#/components/parameters/AddressId",
+        ]
+      responses:
+        "200":
+          description: Delete address success
+        "400":
+          description: Address not found
+        "401":
+          description: unauthorize
+
+  # ---- User Wallet ----
+
+  /user/wallet:
+    get:
+      tags:
+        - User Wallet
+      responses:
+        "200":
+          description: OK
+
+components:
+  parameters:
+    Authorization:
+      name: Authorization
+      in: header
+      required: true
+      description: Access token for authentication
+      schema:
+        type: string
+
+    AddressId:
+      name: addressId
+      in: path
+      required: true
+      schema:
+        type: integer
+
+  schemas:
+    AddressSchema:
+      type: object
+      properties:
+        no_telp:
+          type: string
+        postal_code:
+          type: number
+        street:
+          type: string
+        sub_distric:
+          type: string
+        city:
+          type: string
+        province:
+          type: string
+        country:
+          type: string
+      example:
+        no_telp: "081222333444"
+        postal_code: 45412
+        street: jalan mangga dua
+        sub_distric: cimanggu
+        city: bandung
+        province: jawa barat
+        country: indonesia

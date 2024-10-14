@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  email         String         @id @db.VarChar(100)
+  name          String         @db.VarChar(20)
+  password      String         @db.VarChar(100)
+  // relation
+  addresses     Address[]
+  Profile_image Profile_image?
+  Wallet        Wallet[]
+
+  @@map("users")
+}
+
+model Admin {
+  email    String @id @db.VarChar(100)
+  password String @db.VarChar(100)
+
+  @@map("admin")
+}
+
+model Product {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(100)
+  price      Int
+  stock      Int
+  created_at DateTime
+  updated_at DateTime
+
+  @@map("products")
+}
+
+//  -------- User item -----------
+
+model Address {
+  id          Int    @id @default(autoincrement())
+  user_email  String @db.VarChar(100)
+  no_telp     String @db.VarChar(20)
+  postal_code Int
+  street      String @db.VarChar(100)
+  sub_distric String @db.VarChar(100)
+  city        String @db.VarChar(100)
+  province    String @db.VarChar(100)
+  country     String @db.VarChar(100)
+  // relation
+  user        User   @relation(fields: [user_email], references: [email])
+
+  @@map("addresses")
+}
+
+model Profile_image {
+  user_email String @unique @db.VarChar(100)
+  name       String @db.VarChar(100)
+  format     String @db.VarChar(4)
+  data_image Bytes
+  // relation
+  user       User   @relation(fields: [user_email], references: [email])
+
+  @@map("user_profile_image")
+}
+
+model Wallet {
+  id             Int    @id @default(autoincrement())
+  user_email     String @db.VarChar(100)
+  bank           String @db.VarChar(100)
+  name           String @db.VarChar(50)
+  account_number Int
+  // relation
+  user           User   @relation(fields: [user_email], references: [email])
+
+  @@map("wallet")
+}
