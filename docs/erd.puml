@@ -1,83 +1,70 @@
 @startuml ZXSneakers
 entity Users {
- email : String <PK>
+ email : String(100) <PK>
  --
- name : String
- password : String
+ name : String(20)
+ password : String(100)
 }
 
 entity Admin {
- email : String <PK>
+ email : String(100) <PK>
  --
- password : String
+ password : String(100)
 }
 
 entity Products {
  Id : Int <PK>
  --
- name : String
- price : Number
- stock : Number
+ name : String(100)
+ price : Int
+ stock : Int
  created_at : Datatime
  updated_at : Datetime
 }
 
 entity Product_sizes {
+ id : Int (AI) <PK>
  id_product : Int <FK>
  --
- size : number
+ size : Int
 }
 
 entity Product_color {
+ id : Int (AI) <PK>
  id_product : Int <FK>
  --
- color : String
+ color : String(20)
 }
 
 entity Product_images {
+ id Int (AI) <PK>
  id_product : Int <FK>
  --
- name : String
- format : String
+ name : String(100)
+ format : String(4)
  data_image : BLOB
 }
 
 entity Addresses {
- id : Int <PK>
+ id : Int (AI) <PK>
  --
  email_user : String <FK>
  --
- no_telp : String
- postal_code : Number
- street : String
- sub_distric : String
- city : String
- province : String
- country : String
+ no_telp : String(20)
+ postal_code : Int
+ street : String(100)
+ sub_distric : String(100)
+ city : String(100)
+ province : String(100)
+ country : String(100)
 }
 
 entity User_profile_image {
  user_email : String <FK>
  --
- name : String
- format : String
+ name : String(100)
+ format : String(4)
  data_image : BLOB
-}
-
-entity Wallet {
- id : Int <PK>
- --
- email_user : String <FK>
- --
- bank : String
- name : String
- account_number : Number
-}
-
-entity Bank {
-    kode : String <PK>
-    --
-    name : text
 }
 
 object Wishlistes {
@@ -88,17 +75,14 @@ object Wishlistes {
 object Buy {
  id_product : Int <FK>
  email_user : String <FK>
- id_wallet : Int <FK>
  --
- total : number
+ quantity : Int
+ price_total : Int
+ id : Int
  buying_time : Datetime
 }
 
 Users ||--o{ Addresses
-note on link
-    Have
-end note
-Users ||--o{ Wallet
 note on link
     Have
 end note
@@ -119,10 +103,6 @@ note on link
     Have
 end note
 Users }o-- Buy
-Bank }|-- Buy 
-note on link
-    Payment gateway
-end note
 Buy --|{ Products
 Users }o-- Wishlistes
 Wishlistes --|{ Products
@@ -130,5 +110,4 @@ Admin --> Products
 note on link
     Add, Delete, Update
 end note
-Wallet --> Bank
 @enduml

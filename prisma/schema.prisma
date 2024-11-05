@@ -20,7 +20,8 @@ model User {
   // relation
   addresses     Address[]
   Profile_image Profile_image?
-  Wallet        Wallet[]
+  Wishlist      Wishlist[]
+  Buy           Buy[]
 
   @@map("users")
 }
@@ -33,12 +34,18 @@ model Admin {
 }
 
 model Product {
-  id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(100)
-  price      Int
-  stock      Int
-  created_at DateTime
-  updated_at DateTime
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(100)
+  price         Int
+  stock         Int
+  created_at    DateTime
+  updated_at    DateTime
+  // relation
+  Product_size  Product_size[]
+  Product_color Product_color[]
+  Product_image Product_image[]
+  Wishlist      Wishlist[]
+  Buy           Buy[]
 
   @@map("products")
 }
@@ -72,14 +79,64 @@ model Profile_image {
   @@map("user_profile_image")
 }
 
-model Wallet {
-  id             Int    @id @default(autoincrement())
-  user_email     String @db.VarChar(100)
-  bank           String @db.VarChar(100)
-  name           String @db.VarChar(50)
-  account_number Int
-  // relation
-  user           User   @relation(fields: [user_email], references: [email])
+//  -------- Product item -----------
 
-  @@map("wallet")
+model Product_size {
+  id         Int     @id @default(autoincrement())
+  id_product Int
+  size       Int
+  // relation
+  product    Product @relation(fields: [id_product], references: [id])
+
+  @@map("product_sizes")
+}
+
+model Product_color {
+  id         Int     @id @default(autoincrement())
+  id_product Int
+  color      String  @db.VarChar(20)
+  // relation
+  product    Product @relation(fields: [id_product], references: [id])
+
+  @@map("product_colors")
+}
+
+model Product_image {
+  id         Int     @id @default(autoincrement())
+  id_product Int
+  name       String  @db.VarChar(100)
+  format     String  @db.VarChar(4)
+  data_image Bytes
+  // relation
+  product    Product @relation(fields: [id_product], references: [id])
+
+  @@map("product_images")
+}
+
+//  -------- Act -----------
+
+model Wishlist {
+  email_user String  @db.VarChar(100)
+  id_product Int
+  // relation
+  user       User    @relation(fields: [email_user], references: [email])
+  product    Product @relation(fields: [id_product], references: [id])
+
+  @@id([email_user, id_product])
+  @@map("wishlistes")
+}
+
+model Buy {
+  id_product  Int
+  email_user  String   @db.VarChar(100)
+  quantity    Int
+  price_total Int
+  id          Int
+  buying_time DateTime
+  // relation
+  product     Product  @relation(fields: [id_product], references: [id])
+  user        User     @relation(fields: [email_user], references: [email])
+
+  @@id([id_product, email_user])
+  @@map("buy")
 }
