@@ -1,4 +1,7 @@
 node_modules
+test
+migrations
 # Keep environment variables out of version control
 .env
 package-lock.json
+babel.config.json

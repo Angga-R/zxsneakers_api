@@ -13,10 +13,10 @@ servers:
 paths:
   # ---- Users ----
 
-  /users/login:
+  /auth/login:
     post:
       tags:
-        - Users
+        - Auth
       summary: Login User
       requestBody:
         description: Data login user
@@ -65,10 +65,10 @@ paths:
                   value:
                     errors: password is wrong
 
-  /users/register:
+  /auth/register:
     post:
       tags:
-        - Users
+        - Auth
       summary: Register User
       requestBody:
         description: Data register user
@@ -124,10 +124,10 @@ paths:
               example:
                 errors: Email already registered
 
-  /users/logout:
+  /auth/logout:
     delete:
       tags:
-        - Users
+        - Auth
       summary: Logout User API
       parameters: [$ref: "#/components/parameters/Authorization"]
       responses:
