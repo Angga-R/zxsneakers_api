@@ -37,17 +37,11 @@ paths:
         "200":
           description: Login Success
           content:
-            application/json:
+            cookie:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                  name:
-                    type: string
+                type: string
               example:
-                token: unique-token
-                name: Hamidah
+                authorizationToken: jwt-unique-token
         "400":
           description: Login Failed
           content:

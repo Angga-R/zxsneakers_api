@@ -23,7 +23,16 @@ const loginController = async (req, res, next) => {
   }
 };
 
+const logoutController = (req, res, next) => {
+  try {
+    res.clearCookie("token").sendStatus(200);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   registerController,
   loginController,
+  logoutController,
 };
