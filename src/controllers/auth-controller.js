@@ -4,7 +4,7 @@ import authService from "../services/auth-service.js";
 const registerController = async (req, res, next) => {
   try {
     await authService.registerService(req.body);
-    res.status(200).send();
+    res.sendStatus(200);
   } catch (error) {
     next(error);
   }
@@ -13,10 +13,10 @@ const registerController = async (req, res, next) => {
 const loginController = async (req, res, next) => {
   try {
     const token = await authService.loginService(req.body);
-    const maxAge = ms("7d"); // 7 day
+    const maxAge = ms("1d"); // 1 day
     res
       .status(200)
-      .cookie("token", token, { maxAge: maxAge, httpOnly: true })
+      .cookie("authToken", token, { maxAge: maxAge, httpOnly: true })
       .send();
   } catch (error) {
     next(error);
@@ -25,7 +25,7 @@ const loginController = async (req, res, next) => {
 
 const logoutController = (req, res, next) => {
   try {
-    res.clearCookie("token").sendStatus(200);
+    res.clearCookie("authToken").sendStatus(200);
   } catch (error) {
     next(error);
   }

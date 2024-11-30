@@ -41,7 +41,7 @@ paths:
               schema:
                 type: string
               example:
-                authorizationToken: jwt-unique-token
+                authToken: jwt-unique-token
         "400":
           description: Login Failed
           content:
@@ -441,8 +441,8 @@ paths:
 components:
   parameters:
     Authorization:
-      name: Authorization
-      in: header
+      name: authToken
+      in: cookie
       required: true
       description: Access token for authentication
       schema:
