@@ -6,4 +6,6 @@ const updatePasswordValidation = Joi.object({
   confirmPassword: Joi.string().required(),
 });
 
-export { updatePasswordValidation };
+const updateNameValidation = Joi.string().min(3).max(20).required();
+
+export { updatePasswordValidation, updateNameValidation };

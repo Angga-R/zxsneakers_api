@@ -11,5 +11,6 @@ userRouter.put(
   "/users/password/update",
   userController.updatePasswordController
 );
+userRouter.put("/users/name/update", userController.updateNameController);
 
 export { userRouter };

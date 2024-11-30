@@ -1,4 +1,7 @@
-import { updatePasswordService } from "../services/user-service.js";
+import {
+  updateNameService,
+  updatePasswordService,
+} from "../services/user-service.js";
 
 const updatePasswordController = async (req, res, next) => {
   try {
@@ -9,6 +12,16 @@ const updatePasswordController = async (req, res, next) => {
   }
 };
 
+const updateNameController = async (req, res, next) => {
+  try {
+    await updateNameService(req.body.newName, req.userEmail);
+    res.sendStatus(200);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   updatePasswordController,
+  updateNameController,
 };

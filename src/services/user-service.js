@@ -1,6 +1,9 @@
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error-handler/response-error.js";
-import { updatePasswordValidation } from "../validation/user-validation.js";
+import {
+  updateNameValidation,
+  updatePasswordValidation,
+} from "../validation/user-validation.js";
 import { validate } from "../validation/validate.js";
 import bcrypt from "bcrypt";
 
@@ -44,4 +47,17 @@ const updatePasswordService = async (request, userEmail) => {
   });
 };
 
-export { updatePasswordService };
+const updateNameService = async (newName, userEmail) => {
+  newName = validate(updateNameValidation, newName);
+
+  await prismaClient.user.update({
+    where: {
+      email: userEmail,
+    },
+    data: {
+      name: newName,
+    },
+  });
+};
+
+export { updatePasswordService, updateNameService };
