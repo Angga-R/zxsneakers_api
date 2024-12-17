@@ -71,8 +71,8 @@ model Address {
 
 model Profile_image {
   user_email String @unique @db.VarChar(100)
-  name       String @db.VarChar(100)
-  format     String @db.VarChar(4)
+  name       String @db.VarChar(255)
+  format     String @db.VarChar(100)
   data_image Bytes
   // relation
   user       User   @relation(fields: [user_email], references: [email])

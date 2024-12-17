@@ -1,4 +1,5 @@
 import {
+  updateAvatarService,
   updateNameService,
   updatePasswordService,
 } from "../services/user-service.js";
@@ -21,7 +22,18 @@ const updateNameController = async (req, res, next) => {
   }
 };
 
+const updateAvatarController = async (req, res, next) => {
+  try {
+    await updateAvatarService(req.file, req.userEmail);
+
+    res.sendStatus(200);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   updatePasswordController,
   updateNameController,
+  updateAvatarController,
 };

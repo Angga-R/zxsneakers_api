@@ -6,6 +6,7 @@ import {
 } from "../validation/user-validation.js";
 import { validate } from "../validation/validate.js";
 import bcrypt from "bcrypt";
+import moment from "moment";
 
 const updatePasswordService = async (request, userEmail) => {
   const password = validate(updatePasswordValidation, request);
@@ -60,4 +61,17 @@ const updateNameService = async (newName, userEmail) => {
   });
 };
 
-export { updatePasswordService, updateNameService };
+const updateAvatarService = async (requestFile, userEmail) => {
+  await prismaClient.profile_image.update({
+    where: {
+      user_email: userEmail,
+    },
+    data: {
+      name: requestFile.originalname,
+      format: requestFile.mimetype,
+      data_image: requestFile.buffer,
+    },
+  });
+};
+
+export { updatePasswordService, updateNameService, updateAvatarService };
