@@ -233,14 +233,14 @@ paths:
           description: unauthorize
 
   /users/avatar/update:
-    put:
+    post:
       tags:
         - Users
       summary: Change avatar / profile picture
       parameters: [$ref: "#/components/parameters/Authorization"]
       description: "
-        format : jpg, jpeg, png |
-        max-size : 3MB
+        format : image |
+        max-size : 1MB
         "
       requestBody:
         required: true
@@ -263,8 +263,7 @@ paths:
                     type: string
               example:
                 - errors: not image file
-                - errors: format is not jpg, jpeg, png
-                - errors: size above 3MB
+                - errors: file is too large. maximum limit is 1MB
         "401":
           description: unauthorize
 

@@ -13,10 +13,11 @@ userRouter.put(
   userController.updatePasswordController
 );
 userRouter.put("/users/name/update", userController.updateNameController);
-userRouter.put(
+userRouter.post(
   "/users/avatar/update",
   uploadPicture.single("image"),
   userController.updateAvatarController
 );
+userRouter.get("/users/avatar", userController.getAvatarController);
 
 export { userRouter };

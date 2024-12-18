@@ -1,8 +1,10 @@
 import {
+  getAvatarService,
   updateAvatarService,
   updateNameService,
   updatePasswordService,
 } from "../services/user-service.js";
+import path from "path";
 
 const updatePasswordController = async (req, res, next) => {
   try {
@@ -32,8 +34,31 @@ const updateAvatarController = async (req, res, next) => {
   }
 };
 
+const getAvatarController = async (req, res, next) => {
+  try {
+    const result = await getAvatarService(req.userEmail);
+    if (!result) {
+      // send default profile image
+      const photoPath = path.join(
+        process.cwd(),
+        "assets",
+        "user-profile-image",
+        "default-profile-photo.jpg"
+      );
+
+      res.sendFile(photoPath);
+    } else {
+      res.setHeader("Content-Type", result.format);
+      res.send(result.data_image);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   updatePasswordController,
   updateNameController,
   updateAvatarController,
+  getAvatarController,
 };

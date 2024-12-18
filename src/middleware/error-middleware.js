@@ -14,6 +14,14 @@ export const errorMiddleware = async (err, req, res, next) => {
         errors: err.message,
       })
       .end();
+    // errorn handling for limit file size
+  } else if (err.code == "LIMIT_FILE_SIZE") {
+    res
+      .status(400)
+      .json({
+        errors: "file is too large. maximum limit is 1MB",
+      })
+      .end();
   } else {
     // cant understood error
     res

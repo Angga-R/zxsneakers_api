@@ -6,7 +6,8 @@ import {
 } from "../validation/user-validation.js";
 import { validate } from "../validation/validate.js";
 import bcrypt from "bcrypt";
-import moment from "moment";
+import fs from "fs";
+import path from "path";
 
 const updatePasswordService = async (request, userEmail) => {
   const password = validate(updatePasswordValidation, request);
@@ -62,16 +63,48 @@ const updateNameService = async (newName, userEmail) => {
 };
 
 const updateAvatarService = async (requestFile, userEmail) => {
-  await prismaClient.profile_image.update({
+  const checkDataProfile = await prismaClient.profile_image.count({
     where: {
       user_email: userEmail,
     },
-    data: {
-      name: requestFile.originalname,
-      format: requestFile.mimetype,
-      data_image: requestFile.buffer,
+  });
+
+  if (checkDataProfile === 0) {
+    // create new record
+    await prismaClient.profile_image.create({
+      data: {
+        user_email: userEmail,
+        name: requestFile.originalname,
+        format: requestFile.mimetype,
+        data_image: requestFile.buffer,
+      },
+    });
+  } else {
+    // update profile
+    await prismaClient.profile_image.update({
+      where: {
+        user_email: userEmail,
+      },
+      data: {
+        name: requestFile.originalname,
+        format: requestFile.mimetype,
+        data_image: requestFile.buffer,
+      },
+    });
+  }
+};
+
+const getAvatarService = async (userEmail) => {
+  return prismaClient.profile_image.findFirst({
+    where: {
+      user_email: userEmail,
     },
   });
 };
 
-export { updatePasswordService, updateNameService, updateAvatarService };
+export {
+  updatePasswordService,
+  updateNameService,
+  updateAvatarService,
+  getAvatarService,
+};
