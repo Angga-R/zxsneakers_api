@@ -6,8 +6,6 @@ import {
 } from "../validation/user-validation.js";
 import { validate } from "../validation/validate.js";
 import bcrypt from "bcrypt";
-import fs from "fs";
-import path from "path";
 
 const updatePasswordService = async (request, userEmail) => {
   const password = validate(updatePasswordValidation, request);

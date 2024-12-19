@@ -287,6 +287,8 @@ paths:
                   data:
                     type: array
                     properties:
+                      id:
+                        type: integer
                       no_telp:
                         type: string
                       postal_code:
@@ -307,6 +309,7 @@ paths:
                   data:
                     [
                       {
+                        id: 1,
                         no_telp: "081222333444",
                         postal_code: 45412,
                         street: jalan mangga dua,
@@ -316,6 +319,7 @@ paths:
                         country: indonesia,
                       },
                       {
+                        id: 2,
                         no_telp: "081555666777",
                         postal_code: 45411,
                         street: jalan mangga tiga,
