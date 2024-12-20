@@ -292,7 +292,7 @@ paths:
                       no_telp:
                         type: string
                       postal_code:
-                        type: number
+                        type: string
                       street:
                         type: string
                       sub_distric:
@@ -311,7 +311,7 @@ paths:
                       {
                         id: 1,
                         no_telp: "081222333444",
-                        postal_code: 45412,
+                        postal_code: "45412",
                         street: jalan mangga dua,
                         sub_distric: cimanggu,
                         city: bandung,
@@ -321,7 +321,7 @@ paths:
                       {
                         id: 2,
                         no_telp: "081555666777",
-                        postal_code: 45411,
+                        postal_code: "45411",
                         street: jalan mangga tiga,
                         sub_distric: cimanggis,
                         city: karawang,
@@ -464,21 +464,28 @@ components:
       properties:
         no_telp:
           type: string
+          maxLength: 20
         postal_code:
-          type: number
+          type: string
+          maxLength: 11
         street:
           type: string
+          maxLength: 100
         sub_distric:
           type: string
+          maxLength: 100
         city:
           type: string
+          maxLength: 100
         province:
           type: string
+          maxLength: 100
         country:
           type: string
+          maxLength: 100
       example:
         no_telp: "081222333444"
-        postal_code: 45412
+        postal_code: "45412"
         street: jalan mangga dua
         sub_distric: cimanggu
         city: bandung

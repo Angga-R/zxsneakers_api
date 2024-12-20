@@ -57,7 +57,7 @@ model Address {
   id          Int    @id @default(autoincrement())
   user_email  String @db.VarChar(100)
   no_telp     String @db.VarChar(20)
-  postal_code Int
+  postal_code String @db.VarChar(11)
   street      String @db.VarChar(100)
   sub_distric String @db.VarChar(100)
   city        String @db.VarChar(100)
