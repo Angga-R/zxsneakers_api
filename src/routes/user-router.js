@@ -24,5 +24,13 @@ userRouter.get("/users/avatar", userController.getAvatarController);
 // address
 userRouter.get("/users/address", addressController.getAddressController);
 userRouter.post("/users/address/add", addressController.addAddressController);
+userRouter.get(
+  "/users/address/:addressId",
+  addressController.getAddressByIdController
+);
+userRouter.put(
+  "/users/address/update/:addressId",
+  addressController.updateAddressController
+);
 
 export { userRouter };

@@ -354,7 +354,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/AddressSchema"
 
-        "400":
+        "404":
           description: address not found
         "401":
           description: unauthorize
@@ -407,6 +407,8 @@ paths:
       responses:
         "200":
           description: Success update address
+        "404":
+          description: address not found
         "400":
           description: Failed to add new address (if there is an empty value)
           content:

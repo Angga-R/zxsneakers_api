@@ -35,4 +35,47 @@ const addAddressService = async (request, userEmail) => {
   });
 };
 
-export { getAddressService, addAddressService };
+const getAddressByIdService = async (addressId, userEmail) => {
+  const result = await prismaClient.address.findUnique({
+    where: {
+      id: addressId,
+      user_email: userEmail,
+    },
+  });
+
+  if (!result) {
+    throw new ResponseError(404, "address not found");
+  }
+
+  return result;
+};
+
+const updateAddressService = async (request, addressId, userEmail) => {
+  const validatedData = validate(addAddressValidation, request);
+
+  const checkAddress = await prismaClient.address.count({
+    where: {
+      id: addressId,
+      user_email: userEmail,
+    },
+  });
+
+  if (checkAddress < 1) {
+    throw new ResponseError(404, "address not found");
+  }
+
+  await prismaClient.address.update({
+    where: {
+      id: addressId,
+      user_email: userEmail,
+    },
+    data: validatedData,
+  });
+};
+
+export {
+  getAddressService,
+  addAddressService,
+  getAddressByIdService,
+  updateAddressService,
+};
