@@ -11,7 +11,7 @@ info:
 servers:
   - url: https://api.zxsneakers.com/v1
 paths:
-  # ---- Users ----
+  # ---- Auth ----
 
   /auth/login:
     post:
@@ -130,6 +130,117 @@ paths:
         "401":
           description: Logout failed (unauthorize)
 
+  # ---- Admin ----
+
+  /admin/email:
+    get:
+      summary: Get email admin
+      parameters: [$ref: "#/components/parameters/Authorization"]
+      tags:
+        - Admin
+      responses:
+        "200":
+          description: success get email
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+              example:
+                email: "shalangga047@gmail.com"
+
+  /admin/email/update:
+    put:
+      tags:
+        - Admin
+      summary: Update email admin
+      parameters: [$ref: "#/components/parameters/Authorization"]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldEmail:
+                  type: string
+                newEmail:
+                  type: string
+            example:
+              oldEmail: "oldEmail@gmail.com"
+              newEmail: "newEmail@gmail.com"
+      responses:
+        "200":
+          description: change email success
+        "400":
+          description: change email failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: string
+              examples:
+                oldEmail:
+                  value:
+                    errors: wrong oldEmail
+                newEmail:
+                  value:
+                    errors: newEmail is not email type
+        "401":
+          description: unauthorize
+
+  /admin/password/update:
+    put:
+      tags:
+        - Admin
+      summary: Update password admin
+      parameters: [$ref: "#/components/parameters/Authorization"]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                newPassword:
+                  type: string
+                confirmPassword:
+                  type: string
+            example:
+              oldPassword: secretPassword123
+              newPassword: newSecretPassword456
+              confirmPassword: newSecretPassword456
+      responses:
+        "200":
+          description: change password success
+        "400":
+          description: change password failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: string
+              examples:
+                oldPassword:
+                  value:
+                    errors: wrong oldPassword
+                newPassword:
+                  value:
+                    - errors: Password is too sort (min. 7 character)
+                    - errors: Password is too long (max. 100 character)
+                confirmPassword:
+                  value:
+                    errors: confirm password not same
+        "401":
+          description: unauthorize
+
+  # ---- Users ----
   /users/password/update:
     put:
       tags:
