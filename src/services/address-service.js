@@ -1,6 +1,6 @@
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error-handler/response-error.js";
-import { addAddressValidation } from "../validation/address-validation.js";
+import { addressValidation } from "../validation/address-validation.js";
 import { validate } from "../validation/validate.js";
 
 const getAddressService = async (userEmail) => {
@@ -23,7 +23,7 @@ const getAddressService = async (userEmail) => {
 };
 
 const addAddressService = async (request, userEmail) => {
-  const validatedData = validate(addAddressValidation, request);
+  const validatedData = validate(addressValidation, request);
 
   const data = {
     user_email: userEmail,
@@ -51,7 +51,7 @@ const getAddressByIdService = async (addressId, userEmail) => {
 };
 
 const updateAddressService = async (request, addressId, userEmail) => {
-  const validatedData = validate(addAddressValidation, request);
+  const validatedData = validate(addressValidation, request);
 
   const checkAddress = await prismaClient.address.count({
     where: {
@@ -73,9 +73,30 @@ const updateAddressService = async (request, addressId, userEmail) => {
   });
 };
 
+const deleteAddressService = async (addressId, userEmail) => {
+  const checkAddress = await prismaClient.address.count({
+    where: {
+      id: addressId,
+      user_email: userEmail,
+    },
+  });
+
+  if (checkAddress < 1) {
+    throw new ResponseError(404, "address not found");
+  }
+
+  await prismaClient.address.delete({
+    where: {
+      id: addressId,
+      user_email: userEmail,
+    },
+  });
+};
+
 export {
   getAddressService,
   addAddressService,
   getAddressByIdService,
   updateAddressService,
+  deleteAddressService,
 };

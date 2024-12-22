@@ -1,5 +1,6 @@
 import {
   addAddressService,
+  deleteAddressService,
   getAddressByIdService,
   getAddressService,
   updateAddressService,
@@ -36,8 +37,19 @@ const getAddressByIdController = async (req, res, next) => {
 
 const updateAddressController = async (req, res, next) => {
   try {
-    const addressId = parseInt(req.params.addressId);
+    const addressId = parseInt(req.params.addressId, 10);
     await updateAddressService(req.body, addressId, req.userEmail);
+
+    res.sendStatus(200);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteAddressController = async (req, res, next) => {
+  try {
+    const addressId = parseInt(req.params.addressId, 10);
+    await deleteAddressService(addressId, req.userEmail);
 
     res.sendStatus(200);
   } catch (error) {
@@ -50,4 +62,5 @@ export default {
   addAddressController,
   getAddressByIdController,
   updateAddressController,
+  deleteAddressController,
 };

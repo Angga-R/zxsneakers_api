@@ -436,7 +436,7 @@ paths:
       responses:
         "200":
           description: Delete address success
-        "400":
+        "404":
           description: Address not found
         "401":
           description: unauthorize

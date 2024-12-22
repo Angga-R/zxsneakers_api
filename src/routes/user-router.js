@@ -32,5 +32,9 @@ userRouter.put(
   "/users/address/update/:addressId",
   addressController.updateAddressController
 );
+userRouter.delete(
+  "/users/address/delete/:addressId",
+  addressController.deleteAddressController
+);
 
 export { userRouter };
