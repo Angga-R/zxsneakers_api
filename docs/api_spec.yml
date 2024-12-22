@@ -17,9 +17,9 @@ paths:
     post:
       tags:
         - Auth
-      summary: Login User
+      summary: Login User and Admin
       requestBody:
-        description: Data login user
+        description: Data login user / admin
         required: true
         content:
           application/json:
@@ -122,7 +122,7 @@ paths:
     delete:
       tags:
         - Auth
-      summary: Logout User API
+      summary: Logout User and Admin
       parameters: [$ref: "#/components/parameters/Authorization"]
       responses:
         "200":

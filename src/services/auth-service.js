@@ -9,8 +9,28 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv";
 
+async function confirmPasswordAndMakeJWT(password, encryptedPassword, email) {
+  const comparePassword = await bcrypt.compare(password, encryptedPassword);
+
+  if (!comparePassword) {
+    throw new ResponseError(400, "password is wrong");
+  }
+
+  return jwt.sign({ email: email }, process.env.SECRET_KEY);
+}
+
 const registerService = async (request) => {
   const user = validate(registerValidation, request);
+
+  const isEmailUsedByAdmin = await prismaClient.admin.findFirst({
+    where: {
+      email: user.email,
+    },
+  });
+
+  if (isEmailUsedByAdmin) {
+    throw new ResponseError(409, "Email already registered");
+  }
 
   const isEmailUsed = await prismaClient.user.count({
     where: {
@@ -30,25 +50,37 @@ const registerService = async (request) => {
 };
 
 const loginService = async (request) => {
-  const user = validate(loginValidation, request);
+  const validatedData = validate(loginValidation, request);
 
-  const findUser = await prismaClient.user.findFirst({
+  const isAdmin = await prismaClient.admin.findFirst({
     where: {
-      email: user.email,
+      email: validatedData.email,
     },
   });
 
-  if (!findUser) {
-    throw new ResponseError(400, "email not registered");
+  if (isAdmin) {
+    return confirmPasswordAndMakeJWT(
+      validatedData.password,
+      isAdmin.password,
+      validatedData.email
+    );
+  } else {
+    const findUser = await prismaClient.user.findFirst({
+      where: {
+        email: validatedData.email,
+      },
+    });
+
+    if (!findUser) {
+      throw new ResponseError(400, "email not registered");
+    }
+
+    return confirmPasswordAndMakeJWT(
+      validatedData.password,
+      findUser.password,
+      validatedData.email
+    );
   }
-
-  const isPasswordSame = await bcrypt.compare(user.password, findUser.password);
-
-  if (!isPasswordSame) {
-    throw new ResponseError(400, "password is wrong");
-  }
-
-  return jwt.sign({ email: user.email }, process.env.SECRET_KEY);
 };
 
 export default {

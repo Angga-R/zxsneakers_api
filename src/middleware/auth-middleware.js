@@ -22,21 +22,32 @@ export const verifToken = async (req, res, next) => {
       }
     );
 
-    const checkEmail = await prismaClient.user.findFirst({
+    const isAdmin = await prismaClient.admin.findFirst({
       where: {
         email: email,
       },
-      select: {
-        email: true,
-      },
     });
 
-    if (!checkEmail) {
-      throw new ResponseError(401, "unauthorize");
-    }
+    if (isAdmin) {
+      req.isAdmin = true;
+      next();
+    } else {
+      const checkEmail = await prismaClient.user.findFirst({
+        where: {
+          email: email,
+        },
+        select: {
+          email: true,
+        },
+      });
 
-    req.userEmail = checkEmail.email;
-    next();
+      if (!checkEmail) {
+        throw new ResponseError(401, "unauthorize");
+      }
+
+      req.userEmail = checkEmail.email;
+      next();
+    }
   } catch (error) {
     next(error);
   }

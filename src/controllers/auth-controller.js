@@ -15,9 +15,8 @@ const loginController = async (req, res, next) => {
     const token = await authService.loginService(req.body);
     const maxAge = ms("1d"); // 1 day
     res
-      .status(200)
       .cookie("authToken", token, { maxAge: maxAge, httpOnly: true })
-      .send();
+      .sendStatus(200);
   } catch (error) {
     next(error);
   }
