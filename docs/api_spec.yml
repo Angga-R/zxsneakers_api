@@ -150,45 +150,8 @@ paths:
                     type: string
               example:
                 email: "shalangga047@gmail.com"
-
-  /admin/email/update:
-    put:
-      tags:
-        - Admin
-      summary: Update email admin
-      parameters: [$ref: "#/components/parameters/Authorization"]
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                oldEmail:
-                  type: string
-                newEmail:
-                  type: string
-            example:
-              oldEmail: "oldEmail@gmail.com"
-              newEmail: "newEmail@gmail.com"
-      responses:
-        "200":
-          description: change email success
-        "400":
-          description: change email failed
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  errors:
-                    type: string
-              examples:
-                oldEmail:
-                  value:
-                    errors: wrong oldEmail
-                newEmail:
-                  value:
-                    errors: newEmail is not email type
+        "403":
+          description: Forbidden access
         "401":
           description: unauthorize
 
