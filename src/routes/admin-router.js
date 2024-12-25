@@ -7,5 +7,8 @@ const adminRouter = new express.Router();
 adminRouter.use(verifToken);
 
 adminRouter.get("/admin/email", adminController.getEmailAdminController);
-
+adminRouter.put(
+  "/admin/password/update",
+  adminController.updatePasswordAdminController
+);
 export { adminRouter };
