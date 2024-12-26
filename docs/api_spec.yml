@@ -515,7 +515,28 @@ paths:
         "401":
           description: unauthorize
 
-  # ---------- BUY ------------
+  # ---------- Product ------------
+
+  /product/add:
+    post:
+      tags:
+        - Product
+      summary: Add new product (only admin)
+      parameters: [$ref: "#/components/parameters/Authorization"]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductSchemas"
+      responses:
+        "200":
+          description: success add new product
+        "400":
+          description: failed add new product (check error message)
+        "401":
+          description: unauthorize
+        "403":
+          description: Forbidden access
 
 components:
   parameters:
@@ -567,3 +588,40 @@ components:
         city: bandung
         province: jawa barat
         country: indonesia
+
+    ProductSchemas:
+      type: object
+      properties:
+        sku:
+          type: string
+          maxLength: 100
+        name:
+          type: string
+          maxLength: 100
+        price:
+          type: integer
+          maxLength: 11
+        stock:
+          type: integer
+          maxLength: 11
+        colors:
+          type: array
+          maxItems: 5
+          properties:
+            color:
+              type: string
+              maxLength: 20
+        sizes:
+          type: array
+          maxItems: 5
+          properties:
+            size:
+              type: integer
+              maxLength: 11
+      example:
+        sku: "21-nike-air-jordan-top"
+        name: "Nike air jordan"
+        price: 1800000
+        stock: 4
+        colors: ["red", "white", "blue"]
+        sizes: [41, 42, 43]
