@@ -1,5 +1,8 @@
 import { ResponseError } from "../error-handler/response-error.js";
-import { addProductService } from "../services/product-service.js";
+import {
+  addProductService,
+  getAllProductService,
+} from "../services/product-service.js";
 
 const addProductController = async (req, res, next) => {
   try {
@@ -14,4 +17,13 @@ const addProductController = async (req, res, next) => {
   }
 };
 
-export default { addProductController };
+const getAllProductController = async (req, res, next) => {
+  try {
+    const result = await getAllProductService();
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default { addProductController, getAllProductController };
