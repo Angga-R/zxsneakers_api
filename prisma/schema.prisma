@@ -83,21 +83,21 @@ model Profile_image {
 //  -------- Product item -----------
 
 model Product_size {
-  id         Int     @id @default(autoincrement())
-  id_product Int
-  size       Int
+  id          Int     @id @default(autoincrement())
+  sku_product String
+  size        Int
   // relation
-  product    Product @relation(fields: [id_product], references: [id])
+  product     Product @relation(fields: [sku_product], references: [sku])
 
   @@map("product_sizes")
 }
 
 model Product_color {
-  id         Int     @id @default(autoincrement())
-  id_product Int
-  color      String  @db.VarChar(20)
+  id          Int     @id @default(autoincrement())
+  sku_product String
+  color       String  @db.VarChar(20)
   // relation
-  product    Product @relation(fields: [id_product], references: [id])
+  product     Product @relation(fields: [sku_product], references: [sku])
 
   @@map("product_colors")
 }

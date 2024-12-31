@@ -592,9 +592,6 @@ components:
     ProductSchemas:
       type: object
       properties:
-        sku:
-          type: string
-          maxLength: 100
         name:
           type: string
           maxLength: 100
@@ -619,7 +616,6 @@ components:
               type: integer
               maxLength: 11
       example:
-        sku: "21-nike-air-jordan-top"
         name: "Nike air jordan"
         price: 1800000
         stock: 4
