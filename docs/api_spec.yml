@@ -554,6 +554,8 @@ paths:
                   data:
                     type: array
                     properties:
+                      id:
+                        type: integer
                       sku:
                         type: string
                       name:
@@ -582,6 +584,7 @@ paths:
                 data:
                   [
                     {
+                      id: 1,
                       sku: "1-Nike-air-jordan",
                       name: "Nike air jordan",
                       price: 1800000,
@@ -592,6 +595,7 @@ paths:
                       Product_size: [41, 42, 43],
                     },
                     {
+                      id: 2,
                       sku: "2-Adidas-mikey",
                       name: "Adidas mikey",
                       price: 590000,
@@ -605,6 +609,57 @@ paths:
                 totalItem: 2
         "404":
           description: empty product
+
+  /product/{sku}:
+    get:
+      tags:
+        - Product
+      summary: Get product by SKU
+      parameters: [$ref: "#/components/parameters/SKU-product"]
+      responses:
+        "200":
+          description: Get product success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  sku:
+                    type: string
+                  name:
+                    type: string
+                  price:
+                    type: integer
+                  stock:
+                    type: integer
+                  created_at:
+                    type: string
+                  updated_at:
+                    type: string
+                  Product_color:
+                    type: array
+                    properties:
+                      color:
+                        type: string
+                  Product_size:
+                    type: array
+                    properties:
+                      size:
+                        type: integer
+              example:
+                id: 1
+                sku: "1-Nike-air-jordan"
+                name: "Nike air jordan"
+                price: 1800000
+                stock: 4
+                created_at: "2024-12-31T05:40:17.756Z"
+                updated_at: "2024-12-31T05:40:17.756Z"
+                Product_color: ["red", "white", "blue"]
+                Product_size: [41, 42, 43]
+        "404":
+          description: product not found
 
 components:
   parameters:
@@ -622,6 +677,13 @@ components:
       required: true
       schema:
         type: integer
+
+    SKU-product:
+      name: SKU-product
+      in: path
+      required: true
+      schema:
+        type: string
 
   schemas:
     AddressSchema:

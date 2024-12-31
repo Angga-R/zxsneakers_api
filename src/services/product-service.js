@@ -50,7 +50,7 @@ const addProductService = async (request) => {
 };
 
 const getAllProductService = async () => {
-  let data = await prismaClient.product.findMany({
+  const data = await prismaClient.product.findMany({
     include: {
       Product_color: {
         select: {
@@ -80,4 +80,43 @@ const getAllProductService = async () => {
   return { data: data, totalItem: data.length };
 };
 
-export { addProductService, getAllProductService };
+const getProductBySKUService = async (productSKU) => {
+  let product = await prismaClient.product.findUnique({
+    where: {
+      sku: productSKU,
+    },
+    include: {
+      Product_color: {
+        select: {
+          color: true,
+        },
+      },
+      Product_size: {
+        select: {
+          size: true,
+        },
+      },
+    },
+  });
+
+  let colors = [];
+  let sizes = [];
+  let i = 0;
+  let j = 0;
+
+  for (const productColor of product.Product_color) {
+    colors.push(productColor.color);
+    product.Product_color[i] = colors[i];
+    i++;
+  }
+
+  for (const productSize of product.Product_size) {
+    sizes.push(productSize.size);
+    product.Product_size[j] = sizes[j];
+    j++;
+  }
+
+  return product;
+};
+
+export { addProductService, getAllProductService, getProductBySKUService };

@@ -8,5 +8,6 @@ publicRouter.post("/auth/register", authController.registerController);
 publicRouter.post("/auth/login", authController.loginController);
 // product
 publicRouter.get("/product", productController.getAllProductController);
+publicRouter.get("/product/:sku", productController.getProductBySKUController);
 
 export { publicRouter };

@@ -2,6 +2,7 @@ import { ResponseError } from "../error-handler/response-error.js";
 import {
   addProductService,
   getAllProductService,
+  getProductBySKUService,
 } from "../services/product-service.js";
 
 const addProductController = async (req, res, next) => {
@@ -26,4 +27,17 @@ const getAllProductController = async (req, res, next) => {
   }
 };
 
-export default { addProductController, getAllProductController };
+const getProductBySKUController = async (req, res, next) => {
+  try {
+    const result = await getProductBySKUService(req.params.sku);
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default {
+  addProductController,
+  getAllProductController,
+  getProductBySKUController,
+};
