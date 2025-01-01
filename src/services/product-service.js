@@ -1,4 +1,5 @@
 import { prismaClient } from "../app/database.js";
+import { ResponseError } from "../error-handler/response-error.js";
 import { addProductValidation } from "../validation/product-validation.js";
 import { validate } from "../validation/validate.js";
 
@@ -119,4 +120,27 @@ const getProductBySKUService = async (productSKU) => {
   return product;
 };
 
-export { addProductService, getAllProductService, getProductBySKUService };
+const deleteProductService = async (productSKU) => {
+  const checkProduct = await prismaClient.product.findFirst({
+    where: {
+      sku: productSKU,
+    },
+  });
+
+  if (!checkProduct) {
+    throw new ResponseError(404, "product not found");
+  }
+
+  await prismaClient.product.delete({
+    where: {
+      sku: productSKU,
+    },
+  });
+};
+
+export {
+  addProductService,
+  getAllProductService,
+  getProductBySKUService,
+  deleteProductService,
+};

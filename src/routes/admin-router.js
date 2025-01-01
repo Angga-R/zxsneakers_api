@@ -15,4 +15,8 @@ adminRouter.put(
 
 // product
 adminRouter.post("/product/add", productController.addProductController);
+adminRouter.delete(
+  "/product/:sku/delete",
+  productController.deleteProductController
+);
 export { adminRouter };

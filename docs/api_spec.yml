@@ -661,6 +661,26 @@ paths:
         "404":
           description: product not found
 
+  /product/{sku}/delete:
+    delete:
+      tags:
+        - Product
+      summary: Delete product (only admin)
+      parameters:
+        [
+          $ref: "#/components/parameters/Authorization",
+          $ref: "#/components/parameters/SKU-product",
+        ]
+      responses:
+        "200":
+          description: delete product success
+        "404":
+          description: product not found
+        "401":
+          description: unathorize
+        "403":
+          description: Forbidden access
+
 components:
   parameters:
     Authorization:

@@ -87,7 +87,7 @@ model Product_size {
   sku_product String
   size        Int
   // relation
-  product     Product @relation(fields: [sku_product], references: [sku])
+  product     Product @relation(fields: [sku_product], references: [sku], onDelete: Cascade)
 
   @@map("product_sizes")
 }
@@ -97,7 +97,7 @@ model Product_color {
   sku_product String
   color       String  @db.VarChar(20)
   // relation
-  product     Product @relation(fields: [sku_product], references: [sku])
+  product     Product @relation(fields: [sku_product], references: [sku], onDelete: Cascade)
 
   @@map("product_colors")
 }
@@ -121,7 +121,7 @@ model Wishlist {
   id_product Int
   // relation
   user       User    @relation(fields: [email_user], references: [email])
-  product    Product @relation(fields: [id_product], references: [id])
+  product    Product @relation(fields: [id_product], references: [id], onDelete: Cascade)
 
   @@id([email_user, id_product])
   @@map("wishlistes")

@@ -1,6 +1,7 @@
 import { ResponseError } from "../error-handler/response-error.js";
 import {
   addProductService,
+  deleteProductService,
   getAllProductService,
   getProductBySKUService,
 } from "../services/product-service.js";
@@ -36,8 +37,23 @@ const getProductBySKUController = async (req, res, next) => {
   }
 };
 
+const deleteProductController = async (req, res, next) => {
+  try {
+    if (!req.isAdmin) {
+      throw new ResponseError(403, "Forbidden access");
+    }
+
+    await deleteProductService(req.params.sku);
+
+    res.sendStatus(200);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export default {
   addProductController,
   getAllProductController,
   getProductBySKUController,
+  deleteProductController,
 };
