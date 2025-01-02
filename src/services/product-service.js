@@ -6,10 +6,20 @@ import { validate } from "../validation/validate.js";
 const addProductService = async (request) => {
   const validatedData = validate(addProductValidation, request);
 
-  const countProductTable = await prismaClient.product.count();
+  const checkProduct = await prismaClient.product.findMany();
   const productName = validatedData.name.replaceAll(" ", "-");
+  let generateSKU;
 
-  const generateSKU = `${countProductTable + 1}_${productName}`;
+  if (!checkProduct) {
+    // if product empty
+    generateSKU = `1_${productName}`;
+  } else {
+    const getBiggestId = checkProduct.reduce(
+      (max, obj) => (obj.id > max ? obj.id : max),
+      0
+    );
+    generateSKU = `${getBiggestId + 1}_${productName}`;
+  }
   let colors = [];
   let sizes = [];
 
