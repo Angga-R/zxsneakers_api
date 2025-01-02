@@ -44,7 +44,7 @@ const getAddressByIdService = async (addressId, userEmail) => {
   });
 
   if (!result) {
-    throw new ResponseError(404, "address not found");
+    throw new ResponseError(404, "data not found");
   }
 
   return result;
@@ -52,17 +52,6 @@ const getAddressByIdService = async (addressId, userEmail) => {
 
 const updateAddressService = async (request, addressId, userEmail) => {
   const validatedData = validate(addressValidation, request);
-
-  const checkAddress = await prismaClient.address.count({
-    where: {
-      id: addressId,
-      user_email: userEmail,
-    },
-  });
-
-  if (checkAddress < 1) {
-    throw new ResponseError(404, "address not found");
-  }
 
   await prismaClient.address.update({
     where: {
@@ -74,17 +63,6 @@ const updateAddressService = async (request, addressId, userEmail) => {
 };
 
 const deleteAddressService = async (addressId, userEmail) => {
-  const checkAddress = await prismaClient.address.count({
-    where: {
-      id: addressId,
-      user_email: userEmail,
-    },
-  });
-
-  if (checkAddress < 1) {
-    throw new ResponseError(404, "address not found");
-  }
-
   await prismaClient.address.delete({
     where: {
       id: addressId,

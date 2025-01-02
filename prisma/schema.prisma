@@ -20,7 +20,7 @@ model User {
   // relation
   addresses     Address[]
   Profile_image Profile_image?
-  Wishlist      Wishlist[]
+  Cart          Cart[]
   Buy           Buy[]
 
   @@map("users")
@@ -45,7 +45,7 @@ model Product {
   Product_size  Product_size[]
   Product_color Product_color[]
   Product_image Product_image[]
-  Wishlist      Wishlist[]
+  Cart          Cart[]
   Buy           Buy[]
 
   @@map("products")
@@ -116,15 +116,15 @@ model Product_image {
 
 //  -------- Act -----------
 
-model Wishlist {
-  email_user String  @db.VarChar(100)
-  id_product Int
+model Cart {
+  email_user  String  @db.VarChar(100)
+  sku_product String
   // relation
-  user       User    @relation(fields: [email_user], references: [email])
-  product    Product @relation(fields: [id_product], references: [id], onDelete: Cascade)
+  user        User    @relation(fields: [email_user], references: [email])
+  product     Product @relation(fields: [sku_product], references: [sku], onDelete: Cascade)
 
-  @@id([email_user, id_product])
-  @@map("wishlistes")
+  @@id([email_user, sku_product])
+  @@map("carts")
 }
 
 model Buy {

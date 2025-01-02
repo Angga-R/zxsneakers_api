@@ -29,17 +29,7 @@ const registerService = async (request) => {
   });
 
   if (isEmailUsedByAdmin) {
-    throw new ResponseError(409, "Email already registered");
-  }
-
-  const isEmailUsed = await prismaClient.user.count({
-    where: {
-      email: user.email,
-    },
-  });
-
-  if (isEmailUsed !== 0) {
-    throw new ResponseError(409, "Email already registered");
+    throw new ResponseError(409, "duplicate data");
   }
 
   user.password = await bcrypt.hash(user.password, 10);

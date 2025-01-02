@@ -63,6 +63,9 @@ const addProductService = async (request) => {
 const getAllProductService = async () => {
   const data = await prismaClient.product.findMany({
     include: {
+      id: false,
+      created_at: false,
+      updated_at: false,
       Product_color: {
         select: {
           color: true,
@@ -97,6 +100,9 @@ const getProductBySKUService = async (productSKU) => {
       sku: productSKU,
     },
     include: {
+      id: false,
+      created_at: false,
+      updated_at: false,
       Product_color: {
         select: {
           color: true,
@@ -110,37 +116,31 @@ const getProductBySKUService = async (productSKU) => {
     },
   });
 
-  let colors = [];
-  let sizes = [];
-  let i = 0;
-  let j = 0;
+  if (product) {
+    let colors = [];
+    let sizes = [];
+    let i = 0;
+    let j = 0;
 
-  for (const productColor of product.Product_color) {
-    colors.push(productColor.color);
-    product.Product_color[i] = colors[i];
-    i++;
+    for (const productColor of product.Product_color) {
+      colors.push(productColor.color);
+      product.Product_color[i] = colors[i];
+      i++;
+    }
+
+    for (const productSize of product.Product_size) {
+      sizes.push(productSize.size);
+      product.Product_size[j] = sizes[j];
+      j++;
+    }
+
+    return product;
+  } else {
+    throw new ResponseError(404, "data not found");
   }
-
-  for (const productSize of product.Product_size) {
-    sizes.push(productSize.size);
-    product.Product_size[j] = sizes[j];
-    j++;
-  }
-
-  return product;
 };
 
 const deleteProductService = async (productSKU) => {
-  const checkProduct = await prismaClient.product.findFirst({
-    where: {
-      sku: productSKU,
-    },
-  });
-
-  if (!checkProduct) {
-    throw new ResponseError(404, "product not found");
-  }
-
   await prismaClient.product.delete({
     where: {
       sku: productSKU,
