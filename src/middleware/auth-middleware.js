@@ -7,7 +7,7 @@ export const verifToken = async (req, res, next) => {
   try {
     const { cookie } = req.headers;
     if (!cookie) {
-      throw new ResponseError(401, "unauthorize");
+      throw new ResponseError(401, "unauthorized");
     }
     const token = cookie.split("=")[1];
     const email = jwt.verify(
@@ -15,7 +15,7 @@ export const verifToken = async (req, res, next) => {
       process.env.SECRET_KEY,
       (error, payload) => {
         if (error) {
-          throw new ResponseError(401, "unauthorize");
+          throw new ResponseError(401, "unauthorized");
         } else {
           return payload.email;
         }
@@ -42,7 +42,7 @@ export const verifToken = async (req, res, next) => {
       });
 
       if (!checkEmail) {
-        throw new ResponseError(401, "unauthorize");
+        throw new ResponseError(401, "unauthorized");
       }
 
       req.userEmail = checkEmail.email;

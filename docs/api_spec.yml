@@ -119,7 +119,7 @@ paths:
         "200":
           description: Logout success
         "401":
-          description: Logout failed (unauthorize)
+          description: Logout failed (unauthorized)
 
   # ---- Admin ----
 
@@ -144,7 +144,7 @@ paths:
         "403":
           description: Forbidden access
         "401":
-          description: unauthorize
+          description: unauthorized
 
   /admin/password/update:
     put:
@@ -192,7 +192,7 @@ paths:
                   value:
                     errors: confirm password not same
         "401":
-          description: unauthorize
+          description: unauthorized
 
   # ---- Users ----
   /users/password/update:
@@ -242,7 +242,7 @@ paths:
                   value:
                     errors: confirm password not same
         "401":
-          description: unauthorize
+          description: unauthorized
 
   /users/name/update:
     put:
@@ -277,7 +277,7 @@ paths:
                 - errors: Name is too sort (min. 3 character)
                 - errors: Name is too long (max. 20 character)
         "401":
-          description: unauthorize
+          description: unauthorized
 
   /users/avatar:
     get:
@@ -295,7 +295,7 @@ paths:
                 format: binary
 
         "401":
-          description: unauthorize
+          description: unauthorized
 
   /users/avatar/update:
     post:
@@ -330,7 +330,7 @@ paths:
                 - errors: not image file
                 - errors: file is too large. maximum limit is 1MB
         "401":
-          description: unauthorize
+          description: unauthorized
 
   # ---- User Addresses ----
 
@@ -399,7 +399,7 @@ paths:
         "400":
           description: address is empty
         "401":
-          description: unauthorize
+          description: unauthorized
 
   /users/address/{addressId}:
     get:
@@ -422,7 +422,7 @@ paths:
         "404":
           description: data not found
         "401":
-          description: unauthorize
+          description: unauthorized
 
   /users/address/add:
     post:
@@ -451,9 +451,9 @@ paths:
                 example:
                   errors: data cannot be empty
         "401":
-          description: unauthorize
+          description: unauthorized
 
-  /users/address/update/{addressId}:
+  /users/address/{addressId}/update:
     patch:
       tags:
         - User Addresses
@@ -486,9 +486,9 @@ paths:
                 example:
                   errors: data cannot be empty
         "401":
-          description: unauthorize
+          description: unauthorized
 
-  /users/address/delete/{addressId}:
+  /users/address/{addressId}/delete:
     delete:
       tags:
         - User Addresses
@@ -504,7 +504,7 @@ paths:
         "404":
           description: data not found
         "401":
-          description: unauthorize
+          description: unauthorized
 
   # ---------- Product ------------
 
@@ -525,7 +525,7 @@ paths:
         "400":
           description: failed add new product (check error message)
         "401":
-          description: unauthorize
+          description: unauthorized
         "403":
           description: Forbidden access
 
@@ -657,7 +657,7 @@ paths:
         "404":
           description: data not found
         "401":
-          description: unathorize
+          description: unathorized
         "403":
           description: Forbidden access
 
@@ -679,7 +679,7 @@ paths:
         "404":
           description: product not found
         "401":
-          description: unathorize
+          description: unauthorized
         "409":
           description: duplicate data
 
@@ -751,7 +751,7 @@ paths:
                   ]
                 "totalItem": 2
         "401":
-          description: unathorize
+          description: unauthorized
         "404":
           description: empty
 
@@ -769,7 +769,7 @@ paths:
         "200":
           description: delete product from cart success
         "401":
-          description: unathorize
+          description: unauthorized
         "404":
           description: data not found
 

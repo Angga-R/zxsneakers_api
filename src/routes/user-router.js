@@ -30,11 +30,11 @@ userRouter.get(
   addressController.getAddressByIdController
 );
 userRouter.put(
-  "/users/address/update/:addressId",
+  "/users/address/:addressId/update",
   addressController.updateAddressController
 );
 userRouter.delete(
-  "/users/address/delete/:addressId",
+  "/users/address/:addressId/delete",
   addressController.deleteAddressController
 );
 
