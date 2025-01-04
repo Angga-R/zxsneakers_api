@@ -396,10 +396,10 @@ paths:
                     ]
                   totalItem: 2
 
-        "400":
-          description: address is empty
         "401":
           description: unauthorized
+        "404":
+          description: address is empty
 
   /users/address/{addressId}:
     get:

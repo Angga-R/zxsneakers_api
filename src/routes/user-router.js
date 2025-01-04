@@ -1,6 +1,5 @@
 import express from "express";
-import authController from "../controllers/auth-controller.js";
-import { verifToken } from "../middleware/auth-middleware.js";
+import { verifToken, isUser } from "../middleware/auth-middleware.js";
 import userController from "../controllers/user-controller.js";
 import { uploadPicture } from "../middleware/uploadPicture-middleware.js";
 import addressController from "../controllers/address-controller.js";
@@ -8,7 +7,8 @@ import cartController from "../controllers/cart-controller.js";
 
 const userRouter = new express.Router();
 userRouter.use(verifToken);
-userRouter.delete("/auth/logout", authController.logoutController);
+userRouter.use(isUser);
+
 // user
 userRouter.put(
   "/users/password/update",

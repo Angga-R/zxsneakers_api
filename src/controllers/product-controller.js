@@ -8,9 +8,6 @@ import {
 
 const addProductController = async (req, res, next) => {
   try {
-    if (!req.isAdmin) {
-      throw new ResponseError(403, "Forbidden access");
-    }
     await addProductService(req.body);
 
     res.sendStatus(200);
@@ -39,10 +36,6 @@ const getProductBySKUController = async (req, res, next) => {
 
 const deleteProductController = async (req, res, next) => {
   try {
-    if (!req.isAdmin) {
-      throw new ResponseError(403, "Forbidden access");
-    }
-
     await deleteProductService(req.params.sku);
 
     res.sendStatus(200);

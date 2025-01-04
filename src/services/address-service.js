@@ -11,7 +11,7 @@ const getAddressService = async (userEmail) => {
   });
 
   if (result.length < 1) {
-    throw new ResponseError(400, "address is empty");
+    throw new ResponseError(404, "address is empty");
   }
 
   const data = {
