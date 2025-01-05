@@ -55,10 +55,11 @@ const verifToken = async (req, res, next) => {
 
 const isAdmin = (req, res, next) => {
   try {
-    if (req.userEmail) {
-      throw new ResponseError(403, "Forbidden access");
-    } else if (req.isAdmin) {
+    console.info("----- is admin -----");
+    if (req.isAdmin) {
       next();
+    } else {
+      throw new ResponseError(403, "Forbidden access");
     }
   } catch (error) {
     next(error);
@@ -67,6 +68,7 @@ const isAdmin = (req, res, next) => {
 
 const isUser = (req, res, next) => {
   try {
+    console.info("----- is user -----");
     if (req.isAdmin) {
       throw new ResponseError(403, "Forbidden access");
     } else if (req.userEmail) {

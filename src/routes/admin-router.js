@@ -6,18 +6,27 @@ import productController from "../controllers/product-controller.js";
 const adminRouter = new express.Router();
 
 adminRouter.use(verifToken);
-adminRouter.use(isAdmin);
 
-adminRouter.get("/admin/email", adminController.getEmailAdminController);
+adminRouter.get(
+  "/admin/email",
+  isAdmin,
+  adminController.getEmailAdminController
+);
 adminRouter.put(
   "/admin/password/update",
+  isAdmin,
   adminController.updatePasswordAdminController
 );
 
 // product
-adminRouter.post("/product/add", productController.addProductController);
+adminRouter.post(
+  "/product/add",
+  isAdmin,
+  productController.addProductController
+);
 adminRouter.delete(
   "/product/:sku/delete",
+  isAdmin,
   productController.deleteProductController
 );
 export { adminRouter };

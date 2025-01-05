@@ -58,6 +58,8 @@ paths:
                 password:
                   value:
                     errors: password is wrong
+        "403":
+          description: Forbidden access (if logged user try to access)
 
   /auth/register:
     post:
@@ -108,6 +110,8 @@ paths:
                     - errors: Password is too long (max. 100 character)
         "409":
           description: duplicate data
+        "403":
+          description: Forbidden access (if logged user try to access)
 
   /auth/logout:
     delete:
@@ -772,6 +776,74 @@ paths:
           description: unauthorized
         "404":
           description: data not found
+
+  # ---------- Transaction ------------
+
+  /transaction/add:
+    post:
+      tags:
+        - Transaction
+      summary: For user request to do transaction
+      parameters: [$ref: "#/components/parameters/Authorization"]
+      description: "This is using Midtrans Snap Pop-up. For how to use : https://docs.midtrans.com/reference/snap-js"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                items:
+                  type: object
+                  properties:
+                    item:
+                      type: array
+                      properties:
+                        sku:
+                          type: string
+                        color:
+                          type: string
+                        size:
+                          type: integer
+                        quantity:
+                          type: integer
+            example:
+              items:
+                [
+                  {
+                    sku: "1-Nike-air-jordan",
+                    color: "red",
+                    size: 43,
+                    quantity: 2,
+                  },
+                  {
+                    sku: "2-Adidas-mikey",
+                    color: "black",
+                    size: 42,
+                    quantity: 1,
+                  },
+                ]
+      responses:
+        "200":
+          description: request accepted (will expire in 1 hour)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  snap_token:
+                    type: string
+                  snap_url:
+                    type: string
+                  clientKey:
+                    type: string
+              example:
+                snap_token: token
+                snap_url: url
+                clientKey: midtrans_clientKey
+        "400":
+          description: request denied (check error message)
+        "401":
+          description: unathorized
 
 components:
   parameters:

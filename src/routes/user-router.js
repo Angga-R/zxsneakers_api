@@ -4,6 +4,7 @@ import userController from "../controllers/user-controller.js";
 import { uploadPicture } from "../middleware/uploadPicture-middleware.js";
 import addressController from "../controllers/address-controller.js";
 import cartController from "../controllers/cart-controller.js";
+import transactionController from "../controllers/transaction-controller.js";
 
 const userRouter = new express.Router();
 userRouter.use(verifToken);
@@ -44,6 +45,12 @@ userRouter.get("/cart", cartController.getCartController);
 userRouter.delete(
   "/cart/:sku/delete",
   cartController.deleteProductInCartController
+);
+
+// transaction
+userRouter.post(
+  "/transaction/add",
+  transactionController.createTransactionController
 );
 
 export { userRouter };
