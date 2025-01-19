@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { Redis } from "ioredis";
 import { logger } from "./logging.js";
 
 export const prismaClient = new PrismaClient({
@@ -21,6 +22,12 @@ export const prismaClient = new PrismaClient({
       level: "info",
     },
   ],
+});
+
+export const redisClient = new Redis({
+  host: "localhost",
+  port: 6379,
+  db: 0,
 });
 
 // send all info to logger

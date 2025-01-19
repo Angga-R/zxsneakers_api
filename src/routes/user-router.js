@@ -4,7 +4,7 @@ import userController from "../controllers/user-controller.js";
 import { uploadPicture } from "../middleware/uploadPicture-middleware.js";
 import addressController from "../controllers/address-controller.js";
 import cartController from "../controllers/cart-controller.js";
-import transactionController from "../controllers/transaction-controller.js";
+import orderController from "../controllers/order-controller.js";
 
 const userRouter = new express.Router();
 userRouter.use(verifToken);
@@ -47,10 +47,8 @@ userRouter.delete(
   cartController.deleteProductInCartController
 );
 
-// transaction
-userRouter.post(
-  "/transaction/add",
-  transactionController.createTransactionController
-);
+// order
+userRouter.post("/order/add", orderController.createOrderController);
+userRouter.post("/order/success/:orderId", orderController.transactionSuccess);
 
 export { userRouter };

@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-export const createTransactionValidation = Joi.object({
+export const createOrderValidation = Joi.object({
   items: Joi.array()
     .items(
       Joi.object({
@@ -11,4 +11,6 @@ export const createTransactionValidation = Joi.object({
       }).required()
     )
     .required(),
+  addressId: Joi.number().required(),
+  finishUrl: Joi.string().required(),
 });

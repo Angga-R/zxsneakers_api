@@ -6,3 +6,4 @@ log
 .env
 package-lock.json
 babel.config.json
+test.js

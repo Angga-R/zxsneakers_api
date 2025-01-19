@@ -32,7 +32,7 @@ const registerService = async (request) => {
     throw new ResponseError(409, "duplicate data");
   }
 
-  user.password = await bcrypt.hash(user.password, 10);
+  user.password = await bcrypt.hash(user.password, 12);
 
   await prismaClient.user.create({
     data: user,

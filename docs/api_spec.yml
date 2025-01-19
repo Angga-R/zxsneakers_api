@@ -779,13 +779,13 @@ paths:
 
   # ---------- Transaction ------------
 
-  /transaction/add:
+  /order/add:
     post:
       tags:
-        - Transaction
+        - Order
       summary: For user request to do transaction
       parameters: [$ref: "#/components/parameters/Authorization"]
-      description: "This is using Midtrans Snap Pop-up. For how to use : https://docs.midtrans.com/reference/snap-js"
+      description: "This is using Midtrans Snap Pop-up. For how to use : https://docs.midtrans.com/reference/snap-js.\n The finishUrl in requestBody is to redirect the page after snap Pop-up. The page will receive order_id, status_code, and transaction_status from midtrans in query parameter."
       requestBody:
         content:
           application/json:
@@ -806,6 +806,10 @@ paths:
                           type: integer
                         quantity:
                           type: integer
+                addressId:
+                  type: number
+                finishUrl:
+                  type: string
             example:
               items:
                 [
@@ -822,9 +826,11 @@ paths:
                     quantity: 1,
                   },
                 ]
+              addressId: 2
+              finishUrl: "http://zxsneakers.com/transaction/status"
       responses:
         "200":
-          description: request accepted (will expire in 1 hour)
+          description: request accepted (transaction will expire in 1 hour)
           content:
             application/json:
               schema:
@@ -842,6 +848,25 @@ paths:
                 clientKey: midtrans_clientKey
         "400":
           description: request denied (check error message)
+        "401":
+          description: unathorized
+
+  /order/success/{orderId}:
+    post:
+      tags:
+        - Order
+      summary: save success transaction to database
+      description: After the finishUrl (in /order/add) received transaction status from midtrans, if the status_code = 200, hit this API for do saving data order to database
+      parameters:
+        [
+          $ref: "#/components/parameters/Authorization",
+          $ref: "#/components/parameters/orderId",
+        ]
+      responses:
+        "200":
+          description: data order saved
+        "404":
+          description: data not found (data was expired or wrong input orderId)
         "401":
           description: unathorized
 
@@ -864,6 +889,13 @@ components:
 
     SKU-product:
       name: SKU-product
+      in: path
+      required: true
+      schema:
+        type: string
+
+    orderId:
+      name: orderId
       in: path
       required: true
       schema:
