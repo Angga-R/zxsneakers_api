@@ -18,7 +18,12 @@ const addProductController = async (req, res, next) => {
 
 const getAllProductController = async (req, res, next) => {
   try {
-    const result = await getAllProductService();
+    const parameter = {
+      search: req.query.search,
+      page: !req.query.page ? 1 : req.query.page,
+      limit: !req.query.limit ? 0 : req.query.limit,
+    };
+    const result = await getAllProductService(parameter);
     res.status(200).json(result);
   } catch (error) {
     next(error);

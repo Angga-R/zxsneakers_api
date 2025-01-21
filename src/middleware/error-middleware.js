@@ -1,5 +1,6 @@
+import { logger } from "../app/logging.js";
 import { ResponseError } from "../error-handler/response-error.js";
-import { PrismaClient, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 export const errorMiddleware = async (err, req, res, next) => {
   if (!err) {
@@ -43,10 +44,12 @@ export const errorMiddleware = async (err, req, res, next) => {
       .end();
   } else {
     // cant understood error
+    const errorId = logger.errorWithID("Error occurred in application", err);
     res
       .status(500)
       .json({
-        errors: err.message,
+        errors: "Internal Server Error",
+        errorID: errorId,
       })
       .end();
   }

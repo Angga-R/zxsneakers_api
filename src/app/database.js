@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Redis } from "ioredis";
-import { logger } from "./logging.js";
+import { logger, loggerDebug } from "./logging.js";
 
 export const prismaClient = new PrismaClient({
   // move all info from stdout to event
@@ -30,16 +30,17 @@ export const redisClient = new Redis({
   db: 0,
 });
 
-// send all info to logger
+// send error info to logger
 prismaClient.$on("error", (e) => {
-  logger.error(e);
+  loggerDebug.error(e);
 });
+// send to loggerDebug
 prismaClient.$on("warn", (e) => {
-  logger.warn(e);
+  loggerDebug.warn(e);
 });
 prismaClient.$on("info", (e) => {
-  logger.info(e);
+  loggerDebug.info(e);
 });
 prismaClient.$on("query", (e) => {
-  logger.info(e);
+  loggerDebug.info(e);
 });
