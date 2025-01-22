@@ -60,8 +60,24 @@ const addProductService = async (request) => {
   });
 };
 
-const getAllProductService = async () => {
-  const data = await prismaClient.product.findMany({
+const getAllProductService = async (parameter) => {
+  const totalData = await prismaClient.product.count({
+    where: {
+      name: {
+        contains: parameter.search ? parameter.search : "",
+      },
+    },
+  });
+  let data;
+  const skip = (parameter.page - 1) * parameter.limit ? parameter.limit : 0;
+  data = await prismaClient.product.findMany({
+    where: {
+      name: {
+        contains: parameter.search ? parameter.search : "",
+      },
+    },
+    take: parameter.limit ? parameter.limit : totalData,
+    skip: skip,
     include: {
       id: false,
       created_at: false,
@@ -91,7 +107,17 @@ const getAllProductService = async () => {
     i++;
   }
 
-  return { data: data, totalItem: data.length };
+  return {
+    data: data,
+    paging: {
+      page: parameter.limit && totalData !== 0 ? parameter.page : 1,
+      totalPage:
+        parameter.limit && totalData !== 0
+          ? Math.ceil(totalData / parameter.limit)
+          : 1,
+      totalItem: totalData,
+    },
+  };
 };
 
 const getProductBySKUService = async (productSKU) => {

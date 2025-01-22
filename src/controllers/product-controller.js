@@ -20,8 +20,8 @@ const getAllProductController = async (req, res, next) => {
   try {
     const parameter = {
       search: req.query.search,
-      page: !req.query.page ? 1 : req.query.page,
-      limit: !req.query.limit ? 0 : req.query.limit,
+      page: !req.query.page ? 1 : Number(req.query.page),
+      limit: Number(req.query.limit),
     };
     const result = await getAllProductService(parameter);
     res.status(200).json(result);

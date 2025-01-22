@@ -6,7 +6,7 @@ const customFormat = format.printf(
   ({ timestamp, level, message, id, stack }) => {
     return `${timestamp} [ID : ${id}] ${level.toUpperCase()} : ${message}${
       stack ? " - " + stack : ""
-    }`;
+    } \n ---------------------`;
   }
 );
 

@@ -587,12 +587,15 @@ paths:
                         properties:
                           size:
                             type: integer
-                  page:
-                    type: integer
-                  limit:
-                    type: integer
-                  totalItem:
-                    type: integer
+                  paging:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      totalPage:
+                        type: integer
+                      totalItem:
+                        type: integer
                 example:
                   data:
                     [
@@ -613,11 +616,7 @@ paths:
                         Product_size: [43, 45],
                       },
                     ]
-                  page: 1
-                  limit: 0
-                  totalItem: 2
-        "204":
-          description: data not found
+                  paging: { page: 1, totalPage: 1, totalItem: 2 }
         "404":
           description: empty product
 
