@@ -7,7 +7,12 @@ export const validate = (schema, request) => {
   });
 
   if (result.error) {
-    throw new ResponseError(400, result.error.message);
+    const fields = result.error.details.map((error) => error.context.key);
+    const messages = result.error.details.map((error) =>
+      error.message.replaceAll('"', "")
+    );
+
+    throw new ResponseError(400, messages, fields);
   } else {
     return result.value;
   }

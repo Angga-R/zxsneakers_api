@@ -40,7 +40,11 @@ const createOrderService = async (request, userEmail) => {
       },
     });
     if (product.stock < validatedData.items[i].quantity) {
-      throw new ResponseError(400, "quantity more than available stock");
+      throw new ResponseError(
+        400,
+        "quantity more than available stock",
+        "quantity"
+      );
     }
     data.push(product);
   }

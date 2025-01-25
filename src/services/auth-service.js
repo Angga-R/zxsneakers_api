@@ -13,7 +13,7 @@ async function confirmPasswordAndMakeJWT(password, encryptedPassword, email) {
   const comparePassword = await bcrypt.compare(password, encryptedPassword);
 
   if (!comparePassword) {
-    throw new ResponseError(400, "password is wrong");
+    throw new ResponseError(400, "password is wrong", "password");
   }
 
   return jwt.sign({ email: email }, process.env.SECRET_KEY);
@@ -62,7 +62,7 @@ const loginService = async (request) => {
     });
 
     if (!findUser) {
-      throw new ResponseError(400, "email not registered");
+      throw new ResponseError(400, "email not registered", "email");
     }
 
     return confirmPasswordAndMakeJWT(

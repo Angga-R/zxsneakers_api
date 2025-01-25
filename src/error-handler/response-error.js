@@ -1,6 +1,18 @@
 export class ResponseError extends Error {
-  constructor(status, message) {
-    super(message);
+  constructor(status, messages, fields) {
+    const errorObject = {};
+    if (fields) {
+      if (Array.isArray(fields) === false) {
+        errorObject[fields] = messages;
+      } else {
+        for (let i = 0; i < fields.length; i++) {
+          errorObject[fields[i]] = messages[i];
+        }
+      }
+      super(JSON.stringify(errorObject));
+    } else {
+      super(messages);
+    }
     this.status = status;
   }
 }

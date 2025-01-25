@@ -13,20 +13,24 @@ const getEmailAdminService = async () => {
 };
 
 const updatePasswordAdminService = async (request) => {
-  const validatedData = validate(updatePasswordAdminValidation, request);
-
   const checkOldPassword = await prismaClient.admin.findFirst();
 
   const comparePassword = await bcrypt.compare(
-    validatedData.oldPassword,
+    request.oldPassword,
     checkOldPassword.password
   );
   if (!comparePassword) {
-    throw new ResponseError(400, "wrong oldPassword");
+    throw new ResponseError(400, "incorrect old password", "oldPassword");
   }
 
+  const validatedData = validate(updatePasswordAdminValidation, request);
+
   if (validatedData.confirmPassword !== validatedData.newPassword) {
-    throw new ResponseError(400, "confirm password not same");
+    throw new ResponseError(
+      400,
+      "confirm password not same",
+      "confirmPassword"
+    );
   }
 
   const newPassword = await bcrypt.hash(validatedData.newPassword, 10);

@@ -19,7 +19,6 @@ paths:
         - Auth
       summary: Login User and Admin
       requestBody:
-        description: Data login user / admin
         required: true
         content:
           application/json:
@@ -43,21 +42,21 @@ paths:
               example:
                 authToken: jwt-unique-token
         "400":
-          description: Login Failed
+          description: Login Failed (check error message)
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   errors:
-                    type: string
-              examples:
-                email:
-                  value:
-                    errors: email not registered
-                password:
-                  value:
-                    errors: password is wrong
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      password:
+                        type: string
+              example:
+                errors: { email: email not registered }
         "403":
           description: Forbidden access (if logged user try to access)
 
@@ -67,7 +66,6 @@ paths:
         - Auth
       summary: Register User
       requestBody:
-        description: Data register user
         required: true
         content:
           application/json:
@@ -78,8 +76,12 @@ paths:
                   type: string
                 name:
                   type: string
+                  minLength: 3
+                  maxLength: 20
                 password:
                   type: string
+                  minLength: 7
+                  maxLength: 100
             example:
               email: example@gmail.com
               name: Hamidah
@@ -88,26 +90,28 @@ paths:
         "200":
           description: Register success
         "400":
-          description: Bad request
+          description: Bad request (check error message)
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   errors:
-                    type: string
-              examples:
-                email:
-                  value:
-                    errors: not a valid email
-                name:
-                  value:
-                    - errors: Name is too sort (min. 3 character)
-                    - errors: Name is too long (max. 20 character)
-                password:
-                  value:
-                    - errors: Password is too sort (min. 7 character)
-                    - errors: Password is too long (max. 100 character)
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      name:
+                        type: string
+                      password:
+                        type: string
+              example:
+                errors:
+                  {
+                    email: email must be a valid email,
+                    name: name length must be at least 3 characters long,
+                    password: password length must be at least 7 characters long,
+                  }
         "409":
           description: duplicate data
         "403":
@@ -166,6 +170,8 @@ paths:
                   type: string
                 newPassword:
                   type: string
+                  minLength: 7
+                  maxLength: 100
                 confirmPassword:
                   type: string
             example:
@@ -176,25 +182,28 @@ paths:
         "200":
           description: change password success
         "400":
-          description: change password failed
+          description: change password failed (check error message)
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   errors:
-                    type: string
-              examples:
-                oldPassword:
-                  value:
-                    errors: wrong oldPassword
-                newPassword:
-                  value:
-                    - errors: Password is too sort (min. 7 character)
-                    - errors: Password is too long (max. 100 character)
-                confirmPassword:
-                  value:
-                    errors: confirm password not same
+                    type: object
+                    properties:
+                      oldPassword:
+                        type: string
+                      newPassword:
+                        type: string
+                      confirmPassword:
+                        type: string
+              example:
+                errors:
+                  {
+                    oldPassword: incorrect old password,
+                    newPassword: newPassword length must be at least 7 characters long,
+                    confirmPassword: confirm password not same,
+                  }
         "401":
           description: unauthorized
 
@@ -216,6 +225,8 @@ paths:
                   type: string
                 newPassword:
                   type: string
+                  minLength: 7
+                  maxLength: 100
                 confirmPassword:
                   type: string
             example:
@@ -226,25 +237,28 @@ paths:
         "200":
           description: Success change password
         "400":
-          description: bad request
+          description: change password failed (check error message)
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   errors:
-                    type: string
-              examples:
-                oldPassword:
-                  value:
-                    errors: incorrect old password
-                newPassword:
-                  value:
-                    - errors: Password is too sort (min. 7 character)
-                    - errors: Password is too long (max. 100 character)
-                confirmPassword:
-                  value:
-                    errors: confirm password not same
+                    type: object
+                    properties:
+                      oldPassword:
+                        type: string
+                      newPassword:
+                        type: string
+                      confirmPassword:
+                        type: string
+              example:
+                errors:
+                  {
+                    oldPassword: incorrect old password,
+                    newPassword: newPassword length must be at least 7 characters long,
+                    confirmPassword: confirm password not same,
+                  }
         "401":
           description: unauthorized
 
@@ -269,17 +283,20 @@ paths:
         "200":
           description: change name success
         "400":
-          description: change name failed (bad request)
+          description: change name failed (check error message)
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   errors:
-                    type: string
+                    type: object
+                    properties:
+                      newName:
+                        type: string
               example:
-                - errors: Name is too sort (min. 3 character)
-                - errors: Name is too long (max. 20 character)
+                errors:
+                  { newName: newName length must be at least 7 characters long }
         "401":
           description: unauthorized
 
@@ -318,11 +335,12 @@ paths:
             schema:
               type: string
               format: binary
+              maximum: 1
       responses:
         "200":
           description: Upload avatar success
         "400":
-          description: Upload avatar failed
+          description: Upload avatar failed (check error message)
           content:
             application/json:
               schema:
@@ -331,8 +349,7 @@ paths:
                   errors:
                     type: string
               example:
-                - errors: not image file
-                - errors: file is too large. maximum limit is 1MB
+                errors: file is too large. maximum limit is 1MB
         "401":
           description: unauthorized
 
@@ -444,16 +461,16 @@ paths:
         "200":
           description: Success add new address
         "400":
-          description: Failed to add new address (if there is an empty value)
+          description: Failed to add new address (check error message)
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   errors:
-                    type: string
+                    type: object
                 example:
-                  errors: data cannot be empty
+                  errors: { country: country is not allowed to be empty }
         "401":
           description: unauthorized
 
@@ -479,16 +496,17 @@ paths:
         "404":
           description: data not found
         "400":
-          description: Failed to add new address (if there is an empty value)
+          description: update address failed (check error message)
           content:
             application/json:
               schema:
                 type: object
                 properties:
                   errors:
-                    type: string
+                    type: object
                 example:
-                  errors: data cannot be empty
+                  errors:
+                    { postal_code: postal_code is not allowed to be empty }
         "401":
           description: unauthorized
 
@@ -528,6 +546,15 @@ paths:
           description: success add new product
         "400":
           description: failed add new product (check error message)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+              example:
+                errors: { price: price is not allowed to be empty }
         "401":
           description: unauthorized
         "403":

@@ -8,12 +8,24 @@ export const errorMiddleware = async (err, req, res, next) => {
     return;
   }
 
+  const isJson = (data) => {
+    if (typeof data !== "string") {
+      return false;
+    }
+    try {
+      const parsed = JSON.parse(data);
+      return typeof parsed === "object" && parsed !== null;
+    } catch (e) {
+      return false;
+    }
+  };
+
   // if error same with ResponseError
   if (err instanceof ResponseError) {
     res
       .status(err.status)
       .json({
-        errors: err.message,
+        errors: isJson(err.message) ? JSON.parse(err.message) : err.message,
       })
       .end();
     // errorn handling for limit file size

@@ -8,8 +8,6 @@ import { validate } from "../validation/validate.js";
 import bcrypt from "bcrypt";
 
 const updatePasswordService = async (request, userEmail) => {
-  const password = validate(updatePasswordValidation, request);
-
   // check old password
   const user = await prismaClient.user.findFirst({
     where: {
@@ -21,17 +19,23 @@ const updatePasswordService = async (request, userEmail) => {
   });
 
   const comparePassword = await bcrypt.compare(
-    password.oldPassword,
+    request.oldPassword,
     user.password
   );
 
   if (!comparePassword) {
-    throw new ResponseError(400, "incorrect old password");
+    throw new ResponseError(400, "incorrect old password", "oldPassword");
   }
+
+  const password = validate(updatePasswordValidation, request);
 
   // check confirmPassword
   if (password.confirmPassword !== password.newPassword) {
-    throw new ResponseError(400, "confirm password not same");
+    throw new ResponseError(
+      400,
+      "confirm password not same",
+      "confirmPassword"
+    );
   }
 
   // encrypt new password
