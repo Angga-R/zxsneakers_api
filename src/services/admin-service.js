@@ -15,7 +15,7 @@ const getEmailAdminService = async () => {
 const updatePasswordAdminService = async (request) => {
   const checkOldPassword = await prismaClient.admin.findFirst();
 
-  const comparePassword = await bcrypt.compare(
+  let comparePassword = await bcrypt.compare(
     request.oldPassword,
     checkOldPassword.password
   );
@@ -31,6 +31,15 @@ const updatePasswordAdminService = async (request) => {
       "confirm password not same",
       "confirmPassword"
     );
+  }
+
+  comparePassword = await bcrypt.compare(
+    validatedData.newPassword,
+    checkOldPassword.password
+  );
+
+  if (comparePassword) {
+    return;
   }
 
   const newPassword = await bcrypt.hash(validatedData.newPassword, 10);

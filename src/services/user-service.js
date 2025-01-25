@@ -7,6 +7,19 @@ import {
 import { validate } from "../validation/validate.js";
 import bcrypt from "bcrypt";
 
+const getUserDetailService = async (userEmail) => {
+  return prismaClient.user.findFirst({
+    where: {
+      email: userEmail,
+    },
+    select: {
+      email: true,
+      name: true,
+      avatar: true,
+    },
+  });
+};
+
 const updatePasswordService = async (request, userEmail) => {
   // check old password
   const user = await prismaClient.user.findFirst({
@@ -18,7 +31,7 @@ const updatePasswordService = async (request, userEmail) => {
     },
   });
 
-  const comparePassword = await bcrypt.compare(
+  let comparePassword = await bcrypt.compare(
     request.oldPassword,
     user.password
   );
@@ -36,6 +49,13 @@ const updatePasswordService = async (request, userEmail) => {
       "confirm password not same",
       "confirmPassword"
     );
+  }
+
+  comparePassword = await bcrypt.compare(password.newPassword, user.password);
+
+  // if newPassword = current password, dont do query
+  if (comparePassword) {
+    return;
   }
 
   // encrypt new password
@@ -64,42 +84,14 @@ const updateNameService = async (newName, userEmail) => {
   });
 };
 
-const updateAvatarService = async (requestFile, userEmail) => {
-  const checkDataProfile = await prismaClient.profile_image.count({
+const updateAvatarService = async (linkImg, userEmail) => {
+  // update profile
+  await prismaClient.user.update({
     where: {
-      user_email: userEmail,
+      email: userEmail,
     },
-  });
-
-  if (checkDataProfile === 0) {
-    // create new record
-    await prismaClient.profile_image.create({
-      data: {
-        user_email: userEmail,
-        name: requestFile.originalname,
-        format: requestFile.mimetype,
-        data_image: requestFile.buffer,
-      },
-    });
-  } else {
-    // update profile
-    await prismaClient.profile_image.update({
-      where: {
-        user_email: userEmail,
-      },
-      data: {
-        name: requestFile.originalname,
-        format: requestFile.mimetype,
-        data_image: requestFile.buffer,
-      },
-    });
-  }
-};
-
-const getAvatarService = async (userEmail) => {
-  return prismaClient.profile_image.findFirst({
-    where: {
-      user_email: userEmail,
+    data: {
+      avatar: linkImg,
     },
   });
 };
@@ -108,5 +100,5 @@ export {
   updatePasswordService,
   updateNameService,
   updateAvatarService,
-  getAvatarService,
+  getUserDetailService,
 };

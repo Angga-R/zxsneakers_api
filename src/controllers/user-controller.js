@@ -1,5 +1,5 @@
 import {
-  getAvatarService,
+  getUserDetailService,
   updateAvatarService,
   updateNameService,
   updatePasswordService,
@@ -26,7 +26,7 @@ const updateNameController = async (req, res, next) => {
 
 const updateAvatarController = async (req, res, next) => {
   try {
-    await updateAvatarService(req.file, req.userEmail);
+    await updateAvatarService(req.file.cloudUrl, req.userEmail);
 
     res.sendStatus(200);
   } catch (error) {
@@ -34,23 +34,11 @@ const updateAvatarController = async (req, res, next) => {
   }
 };
 
-const getAvatarController = async (req, res, next) => {
+const getUserDetailController = async (req, res, next) => {
   try {
-    const result = await getAvatarService(req.userEmail);
-    if (!result) {
-      // send default profile image
-      const photoPath = path.join(
-        process.cwd(),
-        "assets",
-        "user-profile-image",
-        "default-profile-photo.jpg"
-      );
+    const result = await getUserDetailService(req.userEmail);
 
-      res.sendFile(photoPath);
-    } else {
-      res.setHeader("Content-Type", result.format);
-      res.send(result.data_image);
-    }
+    res.status(200).json(result);
   } catch (error) {
     next(error);
   }
@@ -60,5 +48,5 @@ export default {
   updatePasswordController,
   updateNameController,
   updateAvatarController,
-  getAvatarController,
+  getUserDetailController,
 };

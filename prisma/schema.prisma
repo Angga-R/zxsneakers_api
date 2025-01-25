@@ -14,14 +14,14 @@ datasource db {
 }
 
 model User {
-  email         String         @id @db.VarChar(100)
-  name          String         @db.VarChar(20)
-  password      String         @db.VarChar(100)
+  email        String         @id @db.VarChar(100)
+  name         String         @db.VarChar(20)
+  password     String         @db.VarChar(100)
+  avatar       String?
   // relation
-  addresses     Address[]
-  Profile_image Profile_image?
-  Cart          Cart[]
-  Order_detail  Order_detail[]
+  addresses    Address[]
+  Cart         Cart[]
+  Order_detail Order_detail[]
 
   @@map("users")
 }
@@ -69,17 +69,6 @@ model Address {
   @@map("addresses")
 }
 
-model Profile_image {
-  user_email String @unique @db.VarChar(100)
-  name       String @db.VarChar(255)
-  format     String @db.VarChar(100)
-  data_image Bytes
-  // relation
-  user       User   @relation(fields: [user_email], references: [email])
-
-  @@map("user_profile_image")
-}
-
 //  -------- Product item -----------
 
 model Product_size {
@@ -103,13 +92,11 @@ model Product_color {
 }
 
 model Product_image {
-  id         Int     @id @default(autoincrement())
-  id_product Int
-  name       String  @db.VarChar(100)
-  format     String  @db.VarChar(4)
-  data_image Bytes
+  id          Int     @id @default(autoincrement())
+  sku_product String
+  link        String
   // relation
-  product    Product @relation(fields: [id_product], references: [id])
+  product     Product @relation(fields: [sku_product], references: [sku])
 
   @@map("product_images")
 }

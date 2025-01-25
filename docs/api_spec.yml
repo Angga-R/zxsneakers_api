@@ -208,6 +208,35 @@ paths:
           description: unauthorized
 
   # ---- Users ----
+
+  /users/detail:
+    get:
+      tags:
+        - Users
+      summary: Get user detail
+      parameters: [$ref: "#/components/parameters/Authorization"]
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  name:
+                    type: string
+                  avatar:
+                    type: string
+              example:
+                email: test@gmail.com
+                name: Anggara
+                avatar: http://example.com/image.png
+
+        "401":
+          description: unauthorized
+
   /users/password/update:
     put:
       tags:
@@ -297,24 +326,6 @@ paths:
               example:
                 errors:
                   { newName: newName length must be at least 7 characters long }
-        "401":
-          description: unauthorized
-
-  /users/avatar:
-    get:
-      tags:
-        - Users
-      summary: Get user avatar / profile picture
-      parameters: [$ref: "#/components/parameters/Authorization"]
-      responses:
-        "200":
-          description: Get avatar success
-          content:
-            image/*:
-              schema:
-                type: string
-                format: binary
-
         "401":
           description: unauthorized
 

@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Redis } from "ioredis";
-import { logger, loggerDebug } from "./logging.js";
+import { loggerDebug } from "./logging.js";
 
 export const prismaClient = new PrismaClient({
   // move all info from stdout to event
