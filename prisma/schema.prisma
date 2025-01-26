@@ -33,22 +33,35 @@ model Admin {
   @@map("admin")
 }
 
+//  -------- Product -----------
+
 model Product {
   id            Int             @id @default(autoincrement())
   sku           String          @unique @db.VarChar(100)
   name          String          @db.VarChar(100)
+  description   String?         @db.Text
+  color         String?         @db.VarChar(50)
+  size          String          @db.VarChar(2)
   price         Int
-  stock         Int
+  stock         Int             @default(0)
   created_at    DateTime
   updated_at    DateTime
   // relation
-  Product_size  Product_size[]
-  Product_color Product_color[]
   Product_image Product_image[]
   Cart          Cart[]
   Order_detail  Order_detail[]
 
   @@map("products")
+}
+
+model Product_image {
+  id          Int     @id @default(autoincrement())
+  sku_product String
+  link        String
+  // relation
+  product     Product @relation(fields: [sku_product], references: [sku])
+
+  @@map("product_images")
 }
 
 //  -------- User item -----------
@@ -67,38 +80,6 @@ model Address {
   user        User   @relation(fields: [user_email], references: [email])
 
   @@map("addresses")
-}
-
-//  -------- Product item -----------
-
-model Product_size {
-  id          Int     @id @default(autoincrement())
-  sku_product String
-  size        Int
-  // relation
-  product     Product @relation(fields: [sku_product], references: [sku], onDelete: Cascade)
-
-  @@map("product_sizes")
-}
-
-model Product_color {
-  id          Int     @id @default(autoincrement())
-  sku_product String
-  color       String  @db.VarChar(20)
-  // relation
-  product     Product @relation(fields: [sku_product], references: [sku], onDelete: Cascade)
-
-  @@map("product_colors")
-}
-
-model Product_image {
-  id          Int     @id @default(autoincrement())
-  sku_product String
-  link        String
-  // relation
-  product     Product @relation(fields: [sku_product], references: [sku])
-
-  @@map("product_images")
 }
 
 //  -------- Act -----------
