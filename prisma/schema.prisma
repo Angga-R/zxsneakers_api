@@ -115,7 +115,6 @@ model Order_detail {
   product_id Int?
   price_item Int
   quantity   Int
-  discount   Int?
   subtotal   Int
   created_at DateTime
   // relation
