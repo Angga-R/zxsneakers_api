@@ -14,14 +14,14 @@ datasource db {
 }
 
 model User {
-  email        String         @id @db.VarChar(100)
-  name         String         @db.VarChar(20)
-  password     String         @db.VarChar(100)
-  avatar       String?
+  email     String    @id @db.VarChar(100)
+  name      String    @db.VarChar(20)
+  password  String    @db.VarChar(100)
+  avatar    String?
   // relation
-  addresses    Address[]
-  Cart         Cart[]
-  Order_detail Order_detail[]
+  addresses Address[]
+  Cart      Cart[]
+  Order     Order[]
 
   @@map("users")
 }
@@ -55,11 +55,11 @@ model Product {
 }
 
 model Product_image {
-  id          Int     @id @default(autoincrement())
-  sku_product String
-  link        String
+  id         Int     @id @default(autoincrement())
+  product_id Int
+  link       String
   // relation
-  product     Product @relation(fields: [sku_product], references: [sku])
+  product    Product @relation(fields: [product_id], references: [id])
 
   @@map("product_images")
 }
@@ -82,33 +82,45 @@ model Address {
   @@map("addresses")
 }
 
-//  -------- Act -----------
+//  -------- Cart -----------
 
 model Cart {
-  email_user  String  @db.VarChar(100)
-  sku_product String
+  user_email String  @db.VarChar(100)
+  product_id Int
   // relation
-  user        User    @relation(fields: [email_user], references: [email])
-  product     Product @relation(fields: [sku_product], references: [sku], onDelete: Cascade)
+  user       User    @relation(fields: [user_email], references: [email])
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
 
-  @@id([email_user, sku_product])
+  @@id([user_email, product_id])
   @@map("carts")
 }
 
-model Order_detail {
-  id          Int      @id @default(autoincrement())
-  id_order    String
-  email_user  String   @db.VarChar(100)
-  sku_product String
-  color       String   @db.VarChar(100)
-  size        Int
-  price       Int
-  quantity    Int
+//  -------- Order -----------
+
+model Order {
+  id          String   @id
+  user_email  String
   price_total Int
-  time        DateTime
+  created_at  DateTime
+
+  user         User           @relation(fields: [user_email], references: [email])
+  Order_detail Order_detail[]
+
+  @@map("orders")
+}
+
+model Order_detail {
+  id         Int      @id @default(autoincrement())
+  order_id   String
+  product_id Int?
+  price_item Int
+  quantity   Int
+  discount   Int?
+  subtotal   Int
+  created_at DateTime
   // relation
-  user        User     @relation(fields: [email_user], references: [email])
-  product     Product  @relation(fields: [sku_product], references: [sku])
+  order      Order    @relation(fields: [order_id], references: [id])
+  product    Product? @relation(fields: [product_id], references: [id], onDelete: SetNull)
 
   @@map("order_details")
 }
