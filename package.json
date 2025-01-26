@@ -16,7 +16,6 @@
   "author": "Anggara",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/storage": "^7.15.0",
     "@prisma/client": "^5.20.0",
     "aws-sdk": "^2.1692.0",
     "bcrypt": "^5.1.1",

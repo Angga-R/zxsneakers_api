@@ -12,16 +12,17 @@ const addProductService = async (request) => {
 
   if (!checkProduct) {
     // if product empty
-    generateSKU = `1_${productName}`;
+    generateSKU = `1_${productName.toLowerCase()}`;
   } else {
     const getBiggestId = checkProduct.reduce(
       (max, obj) => (obj.id > max ? obj.id : max),
       0
     );
-    generateSKU = `${getBiggestId + 1}_${productName}`;
+    generateSKU = `${getBiggestId + 1}_${productName.toLowerCase()}`;
   }
-  let colors = [];
-  let sizes = [];
+  const colors = [];
+  const sizes = [];
+  const images = [];
 
   // add color to colors
   for (const color of validatedData.colors) {
@@ -31,6 +32,11 @@ const addProductService = async (request) => {
   // add size to sizes
   for (const size of validatedData.sizes) {
     sizes.push({ size: size });
+  }
+
+  // add image to images
+  for (const image of validatedData.images) {
+    images.push({ link: image });
   }
 
   // add product, color, & size to db
@@ -52,10 +58,16 @@ const addProductService = async (request) => {
           data: sizes,
         },
       },
+      Product_image: {
+        createMany: {
+          data: images,
+        },
+      },
     },
     include: {
       Product_color: true,
       Product_size: true,
+      Product_image: true,
     },
   });
 };
@@ -90,6 +102,11 @@ const getAllProductService = async (parameter) => {
       Product_size: {
         select: {
           size: true,
+        },
+      },
+      Product_image: {
+        select: {
+          link: true,
         },
       },
     },
@@ -137,6 +154,11 @@ const getProductBySKUService = async (productSKU) => {
       Product_size: {
         select: {
           size: true,
+        },
+      },
+      Product_image: {
+        select: {
+          link: true,
         },
       },
     },

@@ -6,6 +6,7 @@ const addProductValidation = Joi.object({
   stock: Joi.number().required(),
   colors: Joi.array().items(Joi.string().max(20).required()).max(5).required(),
   sizes: Joi.array().items(Joi.number().max(50).required()).max(5).required(),
+  images: Joi.array().items(Joi.string().required()).max(5).required(),
 });
 
 export { addProductValidation };

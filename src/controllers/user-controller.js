@@ -4,7 +4,6 @@ import {
   updateNameService,
   updatePasswordService,
 } from "../services/user-service.js";
-import path from "path";
 
 const updatePasswordController = async (req, res, next) => {
   try {

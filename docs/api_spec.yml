@@ -341,6 +341,7 @@ paths:
         "
       requestBody:
         required: true
+        description: set enctype to multipart/form-data in form, and name="avatar"
         content:
           image/*:
             schema:
@@ -625,6 +626,14 @@ paths:
                         properties:
                           size:
                             type: integer
+                      Product_image:
+                        type: array
+                        properties:
+                          data-img:
+                            type: object
+                            properties:
+                              link:
+                                type: string
                   paging:
                     type: object
                     properties:
@@ -644,6 +653,11 @@ paths:
                         stock: 4,
                         Product_color: ["red", "white", "blue"],
                         Product_size: [41, 42, 43],
+                        Product_image:
+                          [
+                            { link: "example.com/img1.jpg" },
+                            { link: "example.com/img2.png" },
+                          ],
                       },
                       {
                         sku: "2-Adidas-mikey",
@@ -652,6 +666,11 @@ paths:
                         stock: 42,
                         Product_color: ["green", "yellow", "grey"],
                         Product_size: [43, 45],
+                        Product_image:
+                          [
+                            { link: "example.com/img3.jpg" },
+                            { link: "example.com/img4.png" },
+                          ],
                       },
                     ]
                   paging: { page: 1, totalPage: 1, totalItem: 2 }
@@ -696,6 +715,14 @@ paths:
                     properties:
                       size:
                         type: integer
+                  Product_image:
+                    type: array
+                    properties:
+                      data-img:
+                        type: object
+                        properties:
+                          link:
+                            type: string
               example:
                 id: 1
                 sku: "1-Nike-air-jordan"
@@ -706,6 +733,11 @@ paths:
                 updated_at: "2024-12-31T05:40:17.756Z"
                 Product_color: ["red", "white", "blue"]
                 Product_size: [41, 42, 43]
+                Product_image:
+                  [
+                    { link: "example.com/img1.jpg" },
+                    { link: "example.com/img2.png" },
+                  ]
         "404":
           description: data not found
 
@@ -1025,9 +1057,15 @@ components:
             size:
               type: integer
               maxLength: 11
+        product-image:
+          type: array
+          description: set enctype to multipart/form-data in form, and name="product-image"
+          minItems: 1
+          maxItems: 5
       example:
         name: "Nike air jordan"
         price: 1800000
         stock: 4
         colors: ["red", "white", "blue"]
         sizes: [41, 42, 43]
+        product-image: [image1.png, image2.jpg, image3.jpeg]

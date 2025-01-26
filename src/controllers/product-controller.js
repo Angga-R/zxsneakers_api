@@ -1,4 +1,3 @@
-import { ResponseError } from "../error-handler/response-error.js";
 import {
   addProductService,
   deleteProductService,
@@ -8,8 +7,8 @@ import {
 
 const addProductController = async (req, res, next) => {
   try {
+    req.body["images"] = req.files.cloudUrl;
     await addProductService(req.body);
-
     res.sendStatus(200);
   } catch (error) {
     next(error);
