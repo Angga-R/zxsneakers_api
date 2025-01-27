@@ -6,67 +6,48 @@ import { validate } from "../validation/validate.js";
 const addProductService = async (request) => {
   const validatedData = validate(addProductValidation, request);
 
-  const checkProduct = await prismaClient.product.findMany();
-  const productName = validatedData.name.replaceAll(" ", "-");
-  let generateSKU;
+  const generateSKU = async () => {
+    const checkProduct = await prismaClient.product.findMany();
+    const id = (
+      checkProduct.reduce(
+        (max, currentValue) => (currentValue.id > max ? currentValue.id : max),
+        0
+      ) + 1
+    )
+      .toString()
+      .padStart(3, "0");
+    const color = validatedData.color
+      ? validatedData.color.slice(0, 3).toUpperCase()
+      : "NOCLR";
 
-  if (!checkProduct) {
-    // if product empty
-    generateSKU = `1_${productName.toLowerCase()}`;
-  } else {
-    const getBiggestId = checkProduct.reduce(
-      (max, obj) => (obj.id > max ? obj.id : max),
-      0
-    );
-    generateSKU = `${getBiggestId + 1}_${productName.toLowerCase()}`;
-  }
-  const colors = [];
-  const sizes = [];
+    return `ZXS-${color}-${validatedData.size}-${id}`;
+  };
+
   const images = [];
-
-  // add color to colors
-  for (const color of validatedData.colors) {
-    colors.push({ color: color });
-  }
-
-  // add size to sizes
-  for (const size of validatedData.sizes) {
-    sizes.push({ size: size });
-  }
 
   // add image to images
   for (const image of validatedData.images) {
     images.push({ link: image });
   }
 
-  // add product, color, & size to db
-  await prismaClient.product.create({
-    data: {
-      sku: generateSKU,
-      name: validatedData.name,
-      price: validatedData.price,
-      stock: validatedData.stock,
-      created_at: new Date(),
-      updated_at: new Date(),
-      Product_color: {
-        createMany: {
-          data: colors,
-        },
-      },
-      Product_size: {
-        createMany: {
-          data: sizes,
-        },
-      },
-      Product_image: {
-        createMany: {
-          data: images,
-        },
+  delete validatedData["images"];
+
+  const data = {
+    sku: await generateSKU(),
+    ...validatedData,
+    created_at: new Date(),
+    updated_at: new Date(),
+    Product_image: {
+      createMany: {
+        data: images,
       },
     },
+  };
+
+  // add product, color, & size to db
+  await prismaClient.product.create({
+    data: data,
     include: {
-      Product_color: true,
-      Product_size: true,
       Product_image: true,
     },
   });
