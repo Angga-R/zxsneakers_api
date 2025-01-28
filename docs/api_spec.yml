@@ -608,24 +608,22 @@ paths:
                   data:
                     type: array
                     properties:
+                      id:
+                        type: integer
                       sku:
                         type: string
                       name:
+                        type: string
+                      description:
+                        type: string
+                      color:
+                        type: string
+                      size:
                         type: string
                       price:
                         type: integer
                       stock:
                         type: integer
-                      Product_color:
-                        type: array
-                        properties:
-                          color:
-                            type: string
-                      Product_size:
-                        type: array
-                        properties:
-                          size:
-                            type: integer
                       Product_image:
                         type: array
                         properties:
@@ -647,12 +645,14 @@ paths:
                   data:
                     [
                       {
-                        sku: "1-Nike-air-jordan",
-                        name: "Nike air jordan",
+                        id: 1,
+                        sku: ZXS-YEL-42-001,
+                        name: Nike air jordan,
+                        description: This is a description product,
+                        color: yellow,
+                        size: "42",
                         price: 1800000,
                         stock: 4,
-                        Product_color: ["red", "white", "blue"],
-                        Product_size: [41, 42, 43],
                         Product_image:
                           [
                             { link: "example.com/img1.jpg" },
@@ -660,12 +660,14 @@ paths:
                           ],
                       },
                       {
-                        sku: "2-Adidas-mikey",
+                        id: 2,
+                        sku: ZXS-RED-42-002,
                         name: "Adidas mikey",
+                        description: this is description product,
+                        color: red,
+                        size: "42",
                         price: 590000,
                         stock: 42,
-                        Product_color: ["green", "yellow", "grey"],
-                        Product_size: [43, 45],
                         Product_image:
                           [
                             { link: "example.com/img3.jpg" },
@@ -1037,35 +1039,30 @@ components:
         name:
           type: string
           maxLength: 100
+        description:
+          type: string
+        color:
+          type: string
+          maxLength: 50
+        size:
+          type: string
+          maxLength: 2
         price:
           type: integer
           maxLength: 11
         stock:
           type: integer
           maxLength: 11
-        colors:
-          type: array
-          maxItems: 5
-          properties:
-            color:
-              type: string
-              maxLength: 20
-        sizes:
-          type: array
-          maxItems: 5
-          properties:
-            size:
-              type: integer
-              maxLength: 11
         product-image:
           type: array
           description: set enctype to multipart/form-data in form, and name="product-image"
           minItems: 1
           maxItems: 5
       example:
-        name: "Nike air jordan"
+        name: Nike air jordan
+        description: this is description product
+        color: violet
+        size: "43"
         price: 1800000
         stock: 4
-        colors: ["red", "white", "blue"]
-        sizes: [41, 42, 43]
         product-image: [image1.png, image2.jpg, image3.jpeg]

@@ -41,10 +41,10 @@ userRouter.delete(
 );
 
 // cart
-userRouter.post("/cart/add/:sku", cartController.addToCartController);
+userRouter.post("/cart/add/:productId", cartController.addToCartController);
 userRouter.get("/cart", cartController.getCartController);
 userRouter.delete(
-  "/cart/:sku/delete",
+  "/cart/:productId/delete",
   cartController.deleteProductInCartController
 );
 

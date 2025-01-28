@@ -40,7 +40,7 @@ const getProductBySKUController = async (req, res, next) => {
 
 const deleteProductController = async (req, res, next) => {
   try {
-    await deleteProductService(req.params.sku);
+    await deleteProductService(Number(req.params.productId));
 
     res.sendStatus(200);
   } catch (error) {

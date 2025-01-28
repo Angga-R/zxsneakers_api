@@ -6,7 +6,7 @@ import {
 
 const addToCartController = async (req, res, next) => {
   try {
-    await addToCartService(req.userEmail, req.params.sku);
+    await addToCartService(req.userEmail, Number(req.params.productId));
 
     res.sendStatus(200);
   } catch (error) {
@@ -25,7 +25,10 @@ const getCartController = async (req, res, next) => {
 
 const deleteProductInCartController = async (req, res, next) => {
   try {
-    await deleteProductInCartService(req.userEmail, req.params.sku);
+    await deleteProductInCartService(
+      req.userEmail,
+      Number(req.params.productId)
+    );
     res.sendStatus(200);
   } catch (error) {
     next(error);

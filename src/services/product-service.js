@@ -72,19 +72,8 @@ const getAllProductService = async (parameter) => {
     take: parameter.limit ? parameter.limit : totalData,
     skip: skip,
     include: {
-      id: false,
       created_at: false,
       updated_at: false,
-      Product_color: {
-        select: {
-          color: true,
-        },
-      },
-      Product_size: {
-        select: {
-          size: true,
-        },
-      },
       Product_image: {
         select: {
           link: true,
@@ -92,18 +81,6 @@ const getAllProductService = async (parameter) => {
       },
     },
   });
-
-  let colors = [];
-  let sizes = [];
-  let i = 0;
-
-  for (const product of data) {
-    colors.push(product.Product_color.map((obj) => obj.color));
-    sizes.push(product.Product_size.map((obj) => obj.size));
-    product.Product_color = colors[i];
-    product.Product_size = sizes[i];
-    i++;
-  }
 
   return {
     data: data,
@@ -124,19 +101,6 @@ const getProductBySKUService = async (productSKU) => {
       sku: productSKU,
     },
     include: {
-      id: false,
-      created_at: false,
-      updated_at: false,
-      Product_color: {
-        select: {
-          color: true,
-        },
-      },
-      Product_size: {
-        select: {
-          size: true,
-        },
-      },
       Product_image: {
         select: {
           link: true,
@@ -145,34 +109,17 @@ const getProductBySKUService = async (productSKU) => {
     },
   });
 
-  if (product) {
-    let colors = [];
-    let sizes = [];
-    let i = 0;
-    let j = 0;
-
-    for (const productColor of product.Product_color) {
-      colors.push(productColor.color);
-      product.Product_color[i] = colors[i];
-      i++;
-    }
-
-    for (const productSize of product.Product_size) {
-      sizes.push(productSize.size);
-      product.Product_size[j] = sizes[j];
-      j++;
-    }
-
-    return product;
-  } else {
+  if (!product) {
     throw new ResponseError(404, "data not found");
   }
+
+  return product;
 };
 
-const deleteProductService = async (productSKU) => {
+const deleteProductService = async (productId) => {
   await prismaClient.product.delete({
     where: {
-      sku: productSKU,
+      id: productId,
     },
   });
 };

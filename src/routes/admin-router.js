@@ -28,7 +28,7 @@ adminRouter.post(
   productController.addProductController
 );
 adminRouter.delete(
-  "/product/:sku/delete",
+  "/product/:productId/delete",
   isAdmin,
   productController.deleteProductController
 );

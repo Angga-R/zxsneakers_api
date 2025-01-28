@@ -1,10 +1,10 @@
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error-handler/response-error.js";
 
-const addToCartService = async (userEmail, productSKU) => {
+const addToCartService = async (userEmail, productId) => {
   const checkProduct = await prismaClient.product.count({
     where: {
-      sku: productSKU,
+      id: productId,
     },
   });
 
@@ -14,8 +14,8 @@ const addToCartService = async (userEmail, productSKU) => {
 
   await prismaClient.cart.create({
     data: {
-      email_user: userEmail,
-      sku_product: productSKU,
+      user_email: userEmail,
+      product_id: productId,
     },
     include: {
       user: true,
@@ -27,25 +27,22 @@ const addToCartService = async (userEmail, productSKU) => {
 const getCartService = async (userEmail) => {
   const products = await prismaClient.cart.findMany({
     where: {
-      email_user: userEmail,
+      user_email: userEmail,
     },
     include: {
-      email_user: false,
-      sku_product: false,
+      user_email: false,
+      product_id: false,
       product: {
         select: {
-          sku: true,
+          id: true,
           name: true,
+          color: true,
+          size: true,
           price: true,
           stock: true,
-          Product_color: {
+          Product_image: {
             select: {
-              color: true,
-            },
-          },
-          Product_size: {
-            select: {
-              size: true,
+              link: true,
             },
           },
         },
@@ -53,20 +50,8 @@ const getCartService = async (userEmail) => {
     },
   });
 
-  if (!products) {
+  if (products.length < 1) {
     throw new ResponseError(404, "empty");
-  }
-
-  let colors = [];
-  let sizes = [];
-  let i = 0;
-
-  for (const data of products) {
-    colors.push(data.product.Product_color.map((obj) => obj.color));
-    sizes.push(data.product.Product_size.map((obj) => obj.size));
-    data.product.Product_color = colors[i];
-    data.product.Product_size = sizes[i];
-    i++;
   }
 
   return {
@@ -75,12 +60,12 @@ const getCartService = async (userEmail) => {
   };
 };
 
-const deleteProductInCartService = async (userEmail, productSKU) => {
+const deleteProductInCartService = async (userEmail, productId) => {
   await prismaClient.cart.delete({
     where: {
-      email_user_sku_product: {
-        email_user: userEmail,
-        sku_product: productSKU,
+      user_email_product_id: {
+        user_email: userEmail,
+        product_id: productId,
       },
     },
   });
