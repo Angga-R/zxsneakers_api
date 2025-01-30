@@ -19,6 +19,9 @@ publicRouter.delete(
 );
 // product
 publicRouter.get("/product", productController.getAllProductController);
-publicRouter.get("/product/:sku", productController.getProductBySKUController);
+publicRouter.get(
+  "/product/:productId",
+  productController.getProductByIdController
+);
 
 export { publicRouter };

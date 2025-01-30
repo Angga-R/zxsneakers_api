@@ -14,7 +14,7 @@ const createOrderController = async (req, res, next) => {
 
 const transactionSuccess = async (req, res, next) => {
   try {
-    await transactionSuccessService(req.params.orderId);
+    await transactionSuccessService(req.params.orderId, req.userEmail);
     res.sendStatus(200);
   } catch (error) {
     next(error);

@@ -54,21 +54,27 @@ const addProductService = async (request) => {
 };
 
 const getAllProductService = async (parameter) => {
-  const totalData = await prismaClient.product.count({
-    where: {
-      name: {
-        contains: parameter.search ? parameter.search : "",
+  const searchQuery = {
+    OR: [
+      {
+        sku: {
+          contains: parameter.search ? parameter.search : "",
+        },
       },
-    },
+      {
+        name: {
+          contains: parameter.search ? parameter.search : "",
+        },
+      },
+    ],
+  };
+  const totalData = await prismaClient.product.count({
+    where: searchQuery,
   });
   let data;
   const skip = (parameter.page - 1) * parameter.limit ? parameter.limit : 0;
   data = await prismaClient.product.findMany({
-    where: {
-      name: {
-        contains: parameter.search ? parameter.search : "",
-      },
-    },
+    where: searchQuery,
     take: parameter.limit ? parameter.limit : totalData,
     skip: skip,
     include: {
@@ -95,10 +101,10 @@ const getAllProductService = async (parameter) => {
   };
 };
 
-const getProductBySKUService = async (productSKU) => {
+const getProductByIdService = async (productId) => {
   let product = await prismaClient.product.findUnique({
     where: {
-      sku: productSKU,
+      id: productId,
     },
     include: {
       Product_image: {
@@ -127,6 +133,6 @@ const deleteProductService = async (productId) => {
 export {
   addProductService,
   getAllProductService,
-  getProductBySKUService,
+  getProductByIdService,
   deleteProductService,
 };

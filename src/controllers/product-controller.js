@@ -2,7 +2,7 @@ import {
   addProductService,
   deleteProductService,
   getAllProductService,
-  getProductBySKUService,
+  getProductByIdService,
 } from "../services/product-service.js";
 
 const addProductController = async (req, res, next) => {
@@ -29,9 +29,9 @@ const getAllProductController = async (req, res, next) => {
   }
 };
 
-const getProductBySKUController = async (req, res, next) => {
+const getProductByIdController = async (req, res, next) => {
   try {
-    const result = await getProductBySKUService(req.params.sku);
+    const result = await getProductByIdService(Number(req.params.productId));
     res.status(200).json(result);
   } catch (error) {
     next(error);
@@ -51,6 +51,6 @@ const deleteProductController = async (req, res, next) => {
 export default {
   addProductController,
   getAllProductController,
-  getProductBySKUController,
+  getProductByIdController,
   deleteProductController,
 };

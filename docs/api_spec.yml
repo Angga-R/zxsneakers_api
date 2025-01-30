@@ -576,7 +576,7 @@ paths:
     get:
       tags:
         - Product
-      summary: Get all product / search product
+      summary: Get all product / search product by SKU or name
       parameters:
         - name: search
           in: query
@@ -679,12 +679,12 @@ paths:
         "404":
           description: empty product
 
-  /product/{sku}:
+  /product/{id}:
     get:
       tags:
         - Product
-      summary: Get product by SKU
-      parameters: [$ref: "#/components/parameters/SKU-product"]
+      summary: Get product by ID
+      parameters: [$ref: "#/components/parameters/productId"]
       responses:
         "200":
           description: Get product success
@@ -699,6 +699,12 @@ paths:
                     type: string
                   name:
                     type: string
+                  description:
+                    type: string
+                  color:
+                    type: string
+                  size:
+                    type: string
                   price:
                     type: integer
                   stock:
@@ -707,16 +713,6 @@ paths:
                     type: string
                   updated_at:
                     type: string
-                  Product_color:
-                    type: array
-                    properties:
-                      color:
-                        type: string
-                  Product_size:
-                    type: array
-                    properties:
-                      size:
-                        type: integer
                   Product_image:
                     type: array
                     properties:
@@ -727,14 +723,15 @@ paths:
                             type: string
               example:
                 id: 1
-                sku: "1-Nike-air-jordan"
-                name: "Nike air jordan"
+                sku: ZXS-YEL-42-001
+                name: Nike air jordan
+                description: This is a description product
+                color: yellow
+                size: "42"
                 price: 1800000
                 stock: 4
-                created_at: "2024-12-31T05:40:17.756Z"
-                updated_at: "2024-12-31T05:40:17.756Z"
-                Product_color: ["red", "white", "blue"]
-                Product_size: [41, 42, 43]
+                created_at: "2025-01-27T10:30:58.948Z"
+                updated_at: "2025-01-27T10:30:58.948Z"
                 Product_image:
                   [
                     { link: "example.com/img1.jpg" },
@@ -743,7 +740,7 @@ paths:
         "404":
           description: data not found
 
-  /product/{sku}/delete:
+  /product/{id}/delete:
     delete:
       tags:
         - Product
@@ -751,7 +748,7 @@ paths:
       parameters:
         [
           $ref: "#/components/parameters/Authorization",
-          $ref: "#/components/parameters/SKU-product",
+          $ref: "#/components/parameters/productId",
         ]
       responses:
         "200":
@@ -765,7 +762,7 @@ paths:
 
   # ---------- Cart ------------
 
-  /cart/add/{sku}:
+  /cart/add/{productId}:
     post:
       tags:
         - Cart
@@ -773,7 +770,7 @@ paths:
       parameters:
         [
           $ref: "#/components/parameters/Authorization",
-          $ref: "#/components/parameters/SKU-product",
+          $ref: "#/components/parameters/productId",
         ]
       responses:
         "200":
@@ -857,7 +854,7 @@ paths:
         "404":
           description: empty
 
-  /cart/{sku}/delete:
+  /cart/{productId}/delete:
     delete:
       tags:
         - Cart
@@ -865,7 +862,7 @@ paths:
       parameters:
         [
           $ref: "#/components/parameters/Authorization",
-          $ref: "#/components/parameters/SKU-product",
+          $ref: "#/components/parameters/productId",
         ]
       responses:
         "200":
@@ -896,11 +893,7 @@ paths:
                     item:
                       type: array
                       properties:
-                        sku:
-                          type: string
-                        color:
-                          type: string
-                        size:
+                        productId:
                           type: integer
                         quantity:
                           type: integer
@@ -910,20 +903,7 @@ paths:
                   type: string
             example:
               items:
-                [
-                  {
-                    sku: "1-Nike-air-jordan",
-                    color: "red",
-                    size: 43,
-                    quantity: 2,
-                  },
-                  {
-                    sku: "2-Adidas-mikey",
-                    color: "black",
-                    size: 42,
-                    quantity: 1,
-                  },
-                ]
+                [{ productId: 5, quantity: 2 }, { productId: 22, quantity: 1 }]
               addressId: 2
               finishUrl: "http://zxsneakers.com/transaction/status"
       responses:
@@ -985,12 +965,12 @@ components:
       schema:
         type: integer
 
-    SKU-product:
-      name: SKU-product
+    productId:
+      name: productId
       in: path
       required: true
       schema:
-        type: string
+        type: integer
 
     orderId:
       name: orderId

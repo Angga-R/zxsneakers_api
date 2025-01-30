@@ -12,34 +12,17 @@ const createOrderService = async (request, userEmail) => {
   const data = [];
   let product;
 
-  for (let i = 0; i < validatedData.items.length; i++) {
+  validatedData.items.map(async (item) => {
     product = await prismaClient.product.findFirst({
       where: {
-        sku: validatedData.items[i].sku,
+        id: item.productId,
       },
       include: {
-        id: false,
         created_at: false,
         updated_at: false,
-        Product_color: {
-          select: {
-            color: true,
-          },
-          where: {
-            color: validatedData.items[i].color,
-          },
-        },
-        Product_size: {
-          select: {
-            size: true,
-          },
-          where: {
-            size: validatedData.items[i].size,
-          },
-        },
       },
     });
-    if (product.stock < validatedData.items[i].quantity) {
+    if (product.stock < item.quantity) {
       throw new ResponseError(
         400,
         "quantity more than available stock",
@@ -47,17 +30,17 @@ const createOrderService = async (request, userEmail) => {
       );
     }
     data.push(product);
-  }
+  });
   // find user include address
-  const user = await prismaClient.user.findUnique({
+  const address = await prismaClient.address.findUnique({
     where: {
-      email: userEmail,
+      id: validatedData.addressId,
+      user_email: userEmail,
     },
     include: {
-      password: false,
-      addresses: {
-        where: {
-          id: validatedData.addressId,
+      user: {
+        select: {
+          name: true,
         },
       },
     },
@@ -91,18 +74,18 @@ const createOrderService = async (request, userEmail) => {
       gross_amount: gross_amount.reduce((acc, curr) => acc + curr),
     },
     customer_details: {
-      first_name: user.name,
-      email: user.email,
-      phone: user.addresses[0].no_telp,
+      first_name: address.user.name,
+      email: address.user_email,
+      phone: address.no_telp,
       billing_address: {
-        address: user.addresses[0].street + " " + user.addresses[0].sub_distric,
-        city: user.addresses[0].city,
-        postal_code: user.addresses[0].postal_code,
+        address: address.street + " " + address.sub_distric,
+        city: address.city,
+        postal_code: address.postal_code,
       },
       shipping_address: {
-        address: user.addresses[0].street + " " + user.addresses[0].sub_distric,
-        city: user.addresses[0].city,
-        postal_code: user.addresses[0].postal_code,
+        address: address.street + " " + address.sub_distric,
+        city: address.city,
+        postal_code: address.postal_code,
       },
     },
 
@@ -143,19 +126,13 @@ const createOrderService = async (request, userEmail) => {
 
   // add data order to redis
   let key;
-
   for (let i = 0; i < data.length; i++) {
     key = `${order_id}-${i + 1}`;
     await redisClient.hset(key, {
-      id_order: order_id,
-      email_user: user.email,
-      sku_product: data[i].sku,
-      price: data[i].price,
+      product_id: data[i].id,
+      price_item: data[i].price,
       quantity: validatedData.items[i].quantity,
-      price_total: gross_amount[i],
-      time: new Date(),
-      color: data[i].Product_color[0].color,
-      size: data[i].Product_size[0].size,
+      subtotal: gross_amount[i],
     });
     await redisClient.expire(key, 3660);
   }
@@ -167,38 +144,60 @@ const createOrderService = async (request, userEmail) => {
   };
 };
 
-const transactionSuccessService = async (order_id) => {
+const transactionSuccessService = async (order_id, userEmail) => {
   // check in redis order_id with data order
-  const checkOrderData = await redisClient.keys(`${order_id}*`);
+  const checkOrderKeys = await redisClient.keys(`${order_id}*`);
 
-  if (checkOrderData.length > 0) {
+  if (checkOrderKeys.length > 0) {
+    const queryData = {
+      id: order_id,
+      user_email: userEmail,
+      price_total: 0,
+      created_at: new Date(),
+      Order_detail: {
+        createMany: {
+          data: [],
+        },
+      },
+    };
     let data;
-    // add data order from redis to tb order_detail
-    for (const key of checkOrderData) {
+    for (const key of checkOrderKeys) {
       data = await redisClient.hgetall(key);
-      data.price = Number(data.price);
-      data.quantity = Number(data.quantity);
-      data.price_total = Number(data.price_total);
-      data.size = Number(data.size);
-      data.time = new Date();
-      const addToDatabase = await prismaClient.order_detail.create({
-        data: data,
+      queryData.Order_detail.createMany.data.push({
+        product_id: Number(data.product_id),
+        price_item: Number(data.price_item),
+        quantity: Number(data.quantity),
+        subtotal: Number(data.subtotal),
+        created_at: new Date(),
       });
+    }
 
-      if (addToDatabase) {
-        // update stock
+    const priceTotal = queryData.Order_detail.createMany.data.reduce(
+      (prevValue, currValue) => prevValue + currValue.subtotal,
+      0
+    );
+
+    queryData.price_total = priceTotal;
+
+    const addToDatabase = await prismaClient.order.create({
+      data: queryData,
+    });
+
+    if (addToDatabase) {
+      // update stock
+      for (let i = 0; i < checkOrderKeys.length; i++) {
         await prismaClient.product.update({
           where: {
-            sku: data.sku_product,
+            id: queryData.Order_detail.createMany.data[i].product_id,
           },
           data: {
             stock: {
-              decrement: data.quantity,
+              decrement: queryData.Order_detail.createMany.data[i].quantity,
             },
           },
         });
         // delete data order from redis
-        await redisClient.del(key);
+        await redisClient.del(checkOrderKeys[i]);
       }
     }
   } else {
