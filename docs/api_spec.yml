@@ -550,7 +550,7 @@ paths:
       parameters: [$ref: "#/components/parameters/Authorization"]
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: "#/components/schemas/ProductSchemas"
       responses:
@@ -569,6 +569,84 @@ paths:
                 errors: { price: price is not allowed to be empty }
         "401":
           description: unauthorized
+        "403":
+          description: Forbidden access
+
+  /product/{id}/update:
+    put:
+      tags:
+        - Product
+      summary: Update data product (only admin)
+      parameters:
+        [
+          $ref: "#/components/parameters/Authorization",
+          $ref: "#/components/parameters/productId",
+        ]
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/ProductSchemas"
+      responses:
+        "200":
+          description: update product success
+        "400":
+          description: update product failed (check error message)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+              example:
+                errors:
+                  { product-image: product-image cannot be more than 5 items }
+        "401":
+          description: unathorized
+        "403":
+          description: Forbidden access
+
+  /product/{id}/delete-img/{imageId}:
+    delete:
+      tags:
+        - Product
+      summary: delete product image (only admin)
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/productId"
+        - name: imageId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: delete product image success
+        "401":
+          description: unathorized
+        "403":
+          description: Forbidden access
+        "404":
+          description: product / image not found
+
+  /product/{id}/delete:
+    delete:
+      tags:
+        - Product
+      summary: Delete product (only admin)
+      parameters:
+        [
+          $ref: "#/components/parameters/Authorization",
+          $ref: "#/components/parameters/productId",
+        ]
+      responses:
+        "200":
+          description: delete product success
+        "404":
+          description: data not found
+        "401":
+          description: unathorized
         "403":
           description: Forbidden access
 
@@ -719,6 +797,8 @@ paths:
                       data-img:
                         type: object
                         properties:
+                          id:
+                            type: integer
                           link:
                             type: string
               example:
@@ -734,31 +814,11 @@ paths:
                 updated_at: "2025-01-27T10:30:58.948Z"
                 Product_image:
                   [
-                    { link: "example.com/img1.jpg" },
-                    { link: "example.com/img2.png" },
+                    { id: 1, link: "example.com/img1.jpg" },
+                    { id: 2, link: "example.com/img2.png" },
                   ]
         "404":
           description: data not found
-
-  /product/{id}/delete:
-    delete:
-      tags:
-        - Product
-      summary: Delete product (only admin)
-      parameters:
-        [
-          $ref: "#/components/parameters/Authorization",
-          $ref: "#/components/parameters/productId",
-        ]
-      responses:
-        "200":
-          description: delete product success
-        "404":
-          description: data not found
-        "401":
-          description: unathorized
-        "403":
-          description: Forbidden access
 
   # ---------- Cart ------------
 
@@ -874,7 +934,7 @@ paths:
 
   # ---------- Transaction ------------
 
-  /order/add:
+  /order/create:
     post:
       tags:
         - Order
@@ -929,11 +989,11 @@ paths:
         "401":
           description: unathorized
 
-  /order/success/{orderId}:
+  /order/{orderId}/paid:
     post:
       tags:
         - Order
-      summary: save success transaction to database
+      summary: order paided by user. Admin will send product after this
       description: After the finishUrl (in /order/add) received transaction status from midtrans, if the status_code = 200, hit this API for do saving data order to database
       parameters:
         [
@@ -945,6 +1005,165 @@ paths:
           description: data order saved
         "404":
           description: data not found (data was expired or wrong input orderId)
+        "401":
+          description: unathorized
+
+  /order/{orderId}/status:
+    post:
+      tags:
+        - Order
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/orderId"
+        - name: status
+          in: query
+          required: true
+          schema:
+            type: string
+      summary: change status order by admin
+      description: status = process / shipping / delivered
+      responses:
+        "200":
+          description: status changed
+        "404":
+          description: order not found
+        "401":
+          description: unathorized
+        "403":
+          description: Forbidden access
+
+  /order/history:
+    get:
+      tags:
+        - Order
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+      summary: get order history
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order_id:
+                    type: string
+                  price_total:
+                    type: integer
+                  products:
+                    type: object
+                    properties:
+                      total_product:
+                        type: integer
+                      product_name:
+                        type: array
+              example:
+                order_id: unique-order-id
+                price_total: 1800000
+                products:
+                  {
+                    total_product: 2,
+                    product_name: ["Nike jordan", "Adidas xxx"],
+                  }
+        "404":
+          description: empty data
+        "401":
+          description: unathorized
+
+  /order/{orderId}/detail:
+    get:
+      tags:
+        - Order
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/orderId"
+      summary: get order detail
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order_id:
+                    type: string
+                  price_total:
+                    type: integer
+                  created_at:
+                    type: string
+                  status:
+                    type: string
+                  address:
+                    type: object
+                    properties:
+                      postal_code:
+                        type: string
+                      street:
+                        type: string
+                      sub_distric:
+                        type: string
+                      city:
+                        type: string
+                      province:
+                        type: string
+                  products:
+                    type: array
+                    properties:
+                      product:
+                        type: object
+                        properties:
+                          product_id:
+                            type: integer
+                          price_item:
+                            type: integer
+                          quantity:
+                            type: integer
+                          name:
+                            type: string
+                          color:
+                            type: string
+                          size:
+                            type: string
+                          product-image:
+                            type: string
+              example:
+                order_id: unique-order-id
+                price_total: 1000000
+                created_at: date-time
+                status: delivered
+                address:
+                  {
+                    postal_code: "311-3416",
+                    street: jl.street,
+                    sub_distric: pekan baru,
+                    city: bogor,
+                    province: jawa barat,
+                  }
+                products:
+                  [
+                    {
+                      product_id: 23,
+                      price_item: 250000,
+                      quantity: 2,
+                      name: Nike Jordan,
+                      color: blue,
+                      size: "42",
+                      product-image: "http://example.com/image/image3.jpg",
+                    },
+                    {
+                      product_id: 25,
+                      price_item: 500000,
+                      quantity: 1,
+                      name: Adidas xxx,
+                      color: red,
+                      size: "42",
+                      product-image: "http://example.com/image/image4.jpg",
+                    },
+                  ]
+        "404":
+          description: order not found
         "401":
           description: unathorized
 
@@ -1035,7 +1254,7 @@ components:
           maxLength: 11
         product-image:
           type: array
-          description: set enctype to multipart/form-data in form, and name="product-image"
+          description: max-size 1MB, set enctype to multipart/form-data in form, and name="product-image"
           minItems: 1
           maxItems: 5
       example:

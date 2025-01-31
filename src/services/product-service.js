@@ -109,6 +109,7 @@ const getProductByIdService = async (productId) => {
     include: {
       Product_image: {
         select: {
+          id: true,
           link: true,
         },
       },

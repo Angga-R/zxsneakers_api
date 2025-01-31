@@ -49,7 +49,7 @@ userRouter.delete(
 );
 
 // order
-userRouter.post("/order/add", orderController.createOrderController);
-userRouter.post("/order/success/:orderId", orderController.transactionSuccess);
+userRouter.post("/order/create", orderController.createOrderController);
+userRouter.post("/order/:orderId/paid", orderController.transactionSuccess);
 
 export { userRouter };

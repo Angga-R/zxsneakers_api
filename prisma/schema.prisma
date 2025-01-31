@@ -67,17 +67,18 @@ model Product_image {
 //  -------- User item -----------
 
 model Address {
-  id          Int    @id @default(autoincrement())
-  user_email  String @db.VarChar(100)
-  no_telp     String @db.VarChar(20)
-  postal_code String @db.VarChar(11)
-  street      String @db.VarChar(100)
-  sub_distric String @db.VarChar(100)
-  city        String @db.VarChar(100)
-  province    String @db.VarChar(100)
-  country     String @db.VarChar(100)
+  id          Int     @id @default(autoincrement())
+  user_email  String  @db.VarChar(100)
+  no_telp     String  @db.VarChar(20)
+  postal_code String  @db.VarChar(11)
+  street      String  @db.VarChar(100)
+  sub_distric String  @db.VarChar(100)
+  city        String  @db.VarChar(100)
+  province    String  @db.VarChar(100)
+  country     String  @db.VarChar(100)
   // relation
-  user        User   @relation(fields: [user_email], references: [email])
+  user        User    @relation(fields: [user_email], references: [email])
+  Order       Order[]
 
   @@map("addresses")
 }
@@ -98,12 +99,14 @@ model Cart {
 //  -------- Order -----------
 
 model Order {
-  id          String   @id
-  user_email  String
-  price_total Int
-  created_at  DateTime
-
+  id           String         @id
+  user_email   String
+  price_total  Int
+  created_at   DateTime
+  status       String
+  address_id   Int
   user         User           @relation(fields: [user_email], references: [email])
+  address      Address        @relation(fields: [address_id], references: [id])
   Order_detail Order_detail[]
 
   @@map("orders")
@@ -116,7 +119,6 @@ model Order_detail {
   price_item Int
   quantity   Int
   subtotal   Int
-  created_at DateTime
   // relation
   order      Order    @relation(fields: [order_id], references: [id])
   product    Product? @relation(fields: [product_id], references: [id], onDelete: SetNull)
