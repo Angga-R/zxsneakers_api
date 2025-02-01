@@ -131,6 +131,45 @@ paths:
 
   # ---- Admin ----
 
+  /admin/dashboard:
+    get:
+      tags:
+        - Admin
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+      summary: get data for dashboard
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  active_users:
+                    type: integer
+                  total_products:
+                    type: integer
+                  total_orders:
+                    type: integer
+                  total_order_complete:
+                    type: integer
+                  total_order_incomplete:
+                    type: integer
+                  total_income:
+                    type: integer
+              example:
+                active_users: 23
+                total_products: 21
+                total_orders: 10
+                total_order_complete: 7
+                total_order_incomplete: 3
+                total_income: 2500000
+        "401":
+          description: unathorized
+        "403":
+          description: Forbidden access
+
   /admin/email:
     get:
       summary: Get email admin
@@ -1085,49 +1124,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  order_id:
-                    type: string
-                  price_total:
-                    type: integer
-                  created_at:
-                    type: string
-                  status:
-                    type: string
-                  address:
-                    type: object
-                    properties:
-                      postal_code:
-                        type: string
-                      street:
-                        type: string
-                      sub_distric:
-                        type: string
-                      city:
-                        type: string
-                      province:
-                        type: string
-                  products:
-                    type: array
-                    properties:
-                      product:
-                        type: object
-                        properties:
-                          product_id:
-                            type: integer
-                          price_item:
-                            type: integer
-                          quantity:
-                            type: integer
-                          name:
-                            type: string
-                          color:
-                            type: string
-                          size:
-                            type: string
-                          product-image:
-                            type: string
+                $ref: "#/components/schemas/OrderDetailSchema"
               example:
                 order_id: unique-order-id
                 price_total: 1000000
@@ -1166,6 +1163,103 @@ paths:
           description: order not found
         "401":
           description: unathorized
+
+  /order/all:
+    get:
+      tags:
+        - Order
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+        - name: status
+          in: query
+          required: false
+          description: status=process/shipping/delivered (if this parameter are not added, will return all data)
+          schema:
+            type: string
+      summary: get all order (only admin)
+      responses:
+        "200":
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                properties:
+                  order:
+                    $ref: "#/components/schemas/OrderDetailSchema"
+              example:
+                [
+                  {
+                    order_id: unique-order-id,
+                    price_total: 1000000,
+                    created_at: date-time,
+                    status: delivered,
+                    address:
+                      {
+                        postal_code: "311-3416",
+                        street: jl.street,
+                        sub_distric: pekan baru,
+                        city: bogor,
+                        province: jawa barat,
+                      },
+                    products:
+                      [
+                        {
+                          product_id: 23,
+                          price_item: 250000,
+                          quantity: 2,
+                          name: Nike Jordan,
+                          color: blue,
+                          size: "42",
+                          product-image: "http://example.com/image/image3.jpg",
+                        },
+                        {
+                          product_id: 25,
+                          price_item: 500000,
+                          quantity: 1,
+                          name: Adidas xxx,
+                          color: red,
+                          size: "42",
+                          product-image: "http://example.com/image/image4.jpg",
+                        },
+                      ],
+                  },
+                  {
+                    order_id: unique-order-id,
+                    price_total: 2000000,
+                    created_at: date-time,
+                    status: process,
+                    address:
+                      {
+                        postal_code: "311-3416",
+                        street: jl.street,
+                        sub_distric: pekan baru,
+                        city: bogor,
+                        province: jawa barat,
+                      },
+                    products:
+                      [
+                        {
+                          product_id: 12,
+                          price_item: 250000,
+                          quantity: 4,
+                          name: Nike Jordan,
+                          color: blue,
+                          size: "42",
+                          product-image: "http://example.com/image/image3.jpg",
+                        },
+                        {
+                          product_id: 31,
+                          price_item: 500000,
+                          quantity: 2,
+                          name: Adidas xxx,
+                          color: red,
+                          size: "42",
+                          product-image: "http://example.com/image/image4.jpg",
+                        },
+                      ],
+                  },
+                ]
 
 components:
   parameters:
@@ -1265,3 +1359,83 @@ components:
         price: 1800000
         stock: 4
         product-image: [image1.png, image2.jpg, image3.jpeg]
+
+    OrderDetailSchema:
+      type: object
+      properties:
+        order_id:
+          type: string
+        price_total:
+          type: integer
+        created_at:
+          type: string
+        status:
+          type: string
+        address:
+          type: object
+          properties:
+            postal_code:
+              type: string
+            street:
+              type: string
+            sub_distric:
+              type: string
+            city:
+              type: string
+            province:
+              type: string
+        products:
+          type: array
+          properties:
+            product:
+              type: object
+              properties:
+                product_id:
+                  type: integer
+                price_item:
+                  type: integer
+                quantity:
+                  type: integer
+                name:
+                  type: string
+                color:
+                  type: string
+                size:
+                  type: string
+                product-image:
+                  type: string
+    OrderExample:
+      example:
+        order_id: unique-order-id
+        price_total: 1000000
+        created_at: date-time
+        status: delivered
+        address:
+          {
+            postal_code: "311-3416",
+            street: jl.street,
+            sub_distric: pekan baru,
+            city: bogor,
+            province: jawa barat,
+          }
+        products:
+          [
+            {
+              product_id: 23,
+              price_item: 250000,
+              quantity: 2,
+              name: Nike Jordan,
+              color: blue,
+              size: "42",
+              product-image: "http://example.com/image/image3.jpg",
+            },
+            {
+              product_id: 25,
+              price_item: 500000,
+              quantity: 1,
+              name: Adidas xxx,
+              color: red,
+              size: "42",
+              product-image: "http://example.com/image/image4.jpg",
+            },
+          ]

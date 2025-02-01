@@ -133,6 +133,7 @@ const createOrderService = async (request, userEmail) => {
       price_item: data[i].price,
       quantity: validatedData.items[i].quantity,
       subtotal: gross_amount[i],
+      address_id: address.id,
     });
     await redisClient.expire(key, 3660);
   }
@@ -154,6 +155,8 @@ const transactionSuccessService = async (order_id, userEmail) => {
       user_email: userEmail,
       price_total: 0,
       created_at: new Date(),
+      status: "process",
+      address_id: 0,
       Order_detail: {
         createMany: {
           data: [],
@@ -168,8 +171,8 @@ const transactionSuccessService = async (order_id, userEmail) => {
         price_item: Number(data.price_item),
         quantity: Number(data.quantity),
         subtotal: Number(data.subtotal),
-        created_at: new Date(),
       });
+      queryData.address_id = Number(data.address_id);
     }
 
     const priceTotal = queryData.Order_detail.createMany.data.reduce(
