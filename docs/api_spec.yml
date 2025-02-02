@@ -694,6 +694,7 @@ paths:
       tags:
         - Product
       summary: Get all product / search product by SKU or name
+      description: "*note : including product with no stock"
       parameters:
         - name: search
           in: query
@@ -1199,7 +1200,7 @@ paths:
         - name: status
           in: query
           required: false
-          description: status=process/shipping/delivered (if this parameter are not added, will return all data)
+          description: status=accepting/rejected/process/shipping/delivered (if this parameter are not added, will return all data)
           schema:
             type: string
       summary: get all order (only admin)
@@ -1286,6 +1287,12 @@ paths:
                       ],
                   },
                 ]
+        "404":
+          description: empty data
+        "401":
+          description: unathorized
+        "403":
+          description: Forbidden access
 
 components:
   parameters:

@@ -40,4 +40,5 @@ adminRouter.post(
   isAdmin,
   orderController.changeStatusController
 );
+adminRouter.get("/order/all", isAdmin, orderController.getAllOrderController);
 export { adminRouter };

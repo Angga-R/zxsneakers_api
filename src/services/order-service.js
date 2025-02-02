@@ -155,7 +155,7 @@ const transactionSuccessService = async (order_id, userEmail) => {
       user_email: userEmail,
       price_total: 0,
       created_at: new Date(),
-      status: "order received",
+      status: "accepting",
       address_id: 0,
       Order_detail: {
         createMany: {
@@ -335,10 +335,87 @@ const detailOrderService = async (userEmail, orderId) => {
   return response;
 };
 
+const getAllOrderService = async (status) => {
+  const queryData = {
+    where: {
+      status: status,
+    },
+    include: {
+      address: {
+        select: {
+          postal_code: true,
+          street: true,
+          sub_distric: true,
+          city: true,
+          province: true,
+        },
+      },
+      Order_detail: {
+        select: {
+          product_id: true,
+          price_item: true,
+          quantity: true,
+          product: {
+            select: {
+              name: true,
+              color: true,
+              size: true,
+              Product_image: {
+                select: {
+                  link: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
+
+  if (!status) {
+    delete queryData.where;
+  }
+  const orders = await prismaClient.order.findMany(queryData);
+
+  if (orders.length < 1) {
+    throw new ResponseError(404, "empty data");
+  }
+
+  const response = [];
+  let data;
+
+  orders.map((order) => {
+    data = {
+      order_id: order.id,
+      price_total: order.price_total,
+      created_at: order.created_at,
+      status: order.status,
+      address: order.address,
+      product: [],
+    };
+
+    order.Order_detail.map((detailProduct) => {
+      data.product.push({
+        product_id: detailProduct.product_id,
+        price_item: detailProduct.price_item,
+        quantity: detailProduct.quantity,
+        name: detailProduct.product.name,
+        color: detailProduct.product.color,
+        size: detailProduct.product.size,
+        product_image: detailProduct.product.Product_image[0].link,
+      });
+    });
+    response.push(data);
+  });
+
+  return response;
+};
+
 export {
   createOrderService,
   transactionSuccessService,
   changeStatusService,
   getHistoryService,
   detailOrderService,
+  getAllOrderService,
 };
