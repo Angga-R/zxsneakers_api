@@ -155,7 +155,7 @@ const transactionSuccessService = async (order_id, userEmail) => {
       user_email: userEmail,
       price_total: 0,
       created_at: new Date(),
-      status: "process",
+      status: "order received",
       address_id: 0,
       Order_detail: {
         createMany: {
@@ -208,4 +208,137 @@ const transactionSuccessService = async (order_id, userEmail) => {
   }
 };
 
-export { createOrderService, transactionSuccessService };
+const changeStatusService = async (orderId, status) => {
+  if (
+    status === "rejected" ||
+    status === "process" ||
+    status === "shipping" ||
+    status === "delivered"
+  ) {
+    await prismaClient.order.update({
+      where: {
+        id: orderId,
+      },
+      data: {
+        status: status,
+      },
+    });
+  } else {
+    throw new ResponseError(400, "invalid status");
+  }
+};
+
+const getHistoryService = async (userEmail) => {
+  const response = [];
+  const orders = await prismaClient.order.findMany({
+    where: {
+      user_email: userEmail,
+    },
+    include: {
+      Order_detail: {
+        select: {
+          product: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (orders.length < 1) {
+    throw new ResponseError(404, "empty data");
+  }
+
+  orders.map((order) => {
+    response.push({
+      order_id: order.id,
+      price_total: order.price_total,
+      status: order.status,
+      created_at: order.created_at,
+      product: {
+        total_product: order.Order_detail.length,
+        product_name: order.Order_detail.map(
+          (orderDetail) => orderDetail.product.name
+        ),
+      },
+    });
+  });
+
+  return response;
+};
+
+const detailOrderService = async (userEmail, orderId) => {
+  const order = await prismaClient.order.findFirst({
+    where: {
+      id: orderId,
+      user_email: userEmail,
+    },
+    include: {
+      address: {
+        select: {
+          postal_code: true,
+          street: true,
+          sub_distric: true,
+          city: true,
+          province: true,
+        },
+      },
+      Order_detail: {
+        select: {
+          product_id: true,
+          price_item: true,
+          quantity: true,
+          product: {
+            select: {
+              name: true,
+              color: true,
+              size: true,
+              Product_image: {
+                select: {
+                  link: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!order) {
+    throw new ResponseError(404, "order not found");
+  }
+
+  const response = {
+    order_id: order.id,
+    price_total: order.price_total,
+    created_at: order.created_at,
+    status: order.status,
+    address: order.address,
+    product: [],
+  };
+
+  order.Order_detail.map((detailProduct) => {
+    response.product.push({
+      product_id: detailProduct.product_id,
+      price_item: detailProduct.price_item,
+      quantity: detailProduct.quantity,
+      name: detailProduct.product.name,
+      color: detailProduct.product.color,
+      size: detailProduct.product.size,
+      product_image: detailProduct.product.Product_image[0].link,
+    });
+  });
+
+  return response;
+};
+
+export {
+  createOrderService,
+  transactionSuccessService,
+  changeStatusService,
+  getHistoryService,
+  detailOrderService,
+};

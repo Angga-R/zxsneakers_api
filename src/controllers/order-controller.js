@@ -1,5 +1,8 @@
 import {
+  changeStatusService,
   createOrderService,
+  detailOrderService,
+  getHistoryService,
   transactionSuccessService,
 } from "../services/order-service.js";
 
@@ -21,4 +24,38 @@ const transactionSuccess = async (req, res, next) => {
   }
 };
 
-export default { createOrderController, transactionSuccess };
+const changeStatusController = async (req, res, next) => {
+  try {
+    await changeStatusService(req.params.orderId, req.query.status);
+
+    res.sendStatus(200);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getHistoryController = async (req, res, next) => {
+  try {
+    const result = await getHistoryService(req.userEmail);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const detailOrderController = async (req, res, next) => {
+  try {
+    const result = await detailOrderService(req.userEmail, req.params.orderId);
+
+    res.status(200).json(result);
+  } catch (error) {}
+};
+
+export default {
+  createOrderController,
+  transactionSuccess,
+  changeStatusController,
+  getHistoryController,
+  detailOrderController,
+};

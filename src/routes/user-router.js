@@ -51,5 +51,7 @@ userRouter.delete(
 // order
 userRouter.post("/order/create", orderController.createOrderController);
 userRouter.post("/order/:orderId/paid", orderController.transactionSuccess);
+userRouter.get("/order/history", orderController.getHistoryController);
+userRouter.get("/order/:orderId/detail", orderController.detailOrderController);
 
 export { userRouter };

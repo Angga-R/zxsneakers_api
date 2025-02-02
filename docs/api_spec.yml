@@ -1064,8 +1064,10 @@ paths:
       responses:
         "200":
           description: status changed
+        "400":
+          description: invalid status
         "404":
-          description: order not found
+          description: data (order) not found
         "401":
           description: unathorized
         "403":
@@ -1084,27 +1086,51 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                type: array
                 properties:
-                  order_id:
-                    type: string
-                  price_total:
-                    type: integer
-                  products:
+                  order:
                     type: object
                     properties:
-                      total_product:
+                      order_id:
+                        type: string
+                      price_total:
                         type: integer
-                      product_name:
-                        type: array
+                      status:
+                        type: string
+                      created_at:
+                        type: string
+                      products:
+                        type: object
+                        properties:
+                          total_product:
+                            type: integer
+                          product_name:
+                            type: array
               example:
-                order_id: unique-order-id
-                price_total: 1800000
-                products:
+                [
                   {
-                    total_product: 2,
-                    product_name: ["Nike jordan", "Adidas xxx"],
-                  }
+                    order_id: unique-order-id,
+                    price_total: 1800000,
+                    status: process,
+                    created_at: date-time,
+                    products:
+                      {
+                        total_product: 2,
+                        product_name: ["Nike jordan", "Adidas xxx"],
+                      },
+                  },
+                  {
+                    order_id: unique-order-id,
+                    price_total: 1500000,
+                    status: shipping,
+                    created_at: date-time,
+                    products:
+                      {
+                        total_product: 2,
+                        product_name: ["product xxx", "Product yyy"],
+                      },
+                  },
+                ]
         "404":
           description: empty data
         "401":
