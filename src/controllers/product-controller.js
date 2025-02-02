@@ -3,12 +3,23 @@ import {
   deleteProductService,
   getAllProductService,
   getProductByIdService,
+  updateProductService,
 } from "../services/product-service.js";
 
 const addProductController = async (req, res, next) => {
   try {
     req.body["images"] = req.files.cloudUrl;
     await addProductService(req.body);
+    res.sendStatus(200);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateProductController = async (req, res, next) => {
+  try {
+    req.body["images"] = req.files.cloudUrl;
+    await updateProductService(Number(req.params.productId), req.body);
     res.sendStatus(200);
   } catch (error) {
     next(error);
@@ -50,6 +61,7 @@ const deleteProductController = async (req, res, next) => {
 
 export default {
   addProductController,
+  updateProductController,
   getAllProductController,
   getProductByIdController,
   deleteProductController,

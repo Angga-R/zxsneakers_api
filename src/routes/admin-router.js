@@ -10,6 +10,12 @@ const adminRouter = new express.Router();
 adminRouter.use(verifToken);
 
 adminRouter.get(
+  "/admin/dashboard",
+  isAdmin,
+  adminController.dashboardController
+);
+
+adminRouter.get(
   "/admin/email",
   isAdmin,
   adminController.getEmailAdminController
@@ -28,6 +34,15 @@ adminRouter.post(
   upload,
   productController.addProductController
 );
+
+adminRouter.put(
+  "/product/:productId/update",
+  isAdmin,
+  filterImg.array("product-images", 5),
+  upload,
+  productController.updateProductController
+);
+
 adminRouter.delete(
   "/product/:productId/delete",
   isAdmin,

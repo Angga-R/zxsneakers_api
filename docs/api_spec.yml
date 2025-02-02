@@ -640,7 +640,7 @@ paths:
                     type: object
               example:
                 errors:
-                  { product-image: product-image cannot be more than 5 items }
+                  { product-images: product-images cannot be more than 5 items }
         "401":
           description: unathorized
         "403":
@@ -1379,9 +1379,9 @@ components:
         stock:
           type: integer
           maxLength: 11
-        product-image:
+        product-images:
           type: array
-          description: max-size 1MB, set enctype to multipart/form-data in form, and name="product-image"
+          description: max-size 1MB, set enctype to multipart/form-data in form, and name="product-images"
           minItems: 1
           maxItems: 5
       example:
@@ -1437,38 +1437,3 @@ components:
                   type: string
                 product-image:
                   type: string
-    OrderExample:
-      example:
-        order_id: unique-order-id
-        price_total: 1000000
-        created_at: date-time
-        status: delivered
-        address:
-          {
-            postal_code: "311-3416",
-            street: jl.street,
-            sub_distric: pekan baru,
-            city: bogor,
-            province: jawa barat,
-          }
-        products:
-          [
-            {
-              product_id: 23,
-              price_item: 250000,
-              quantity: 2,
-              name: Nike Jordan,
-              color: blue,
-              size: "42",
-              product-image: "http://example.com/image/image3.jpg",
-            },
-            {
-              product_id: 25,
-              price_item: 500000,
-              quantity: 1,
-              name: Adidas xxx,
-              color: red,
-              size: "42",
-              product-image: "http://example.com/image/image4.jpg",
-            },
-          ]

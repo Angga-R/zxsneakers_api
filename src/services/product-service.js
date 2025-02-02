@@ -1,6 +1,9 @@
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error-handler/response-error.js";
-import { addProductValidation } from "../validation/product-validation.js";
+import {
+  addProductValidation,
+  updateProductValidation,
+} from "../validation/product-validation.js";
 import { validate } from "../validation/validate.js";
 
 const addProductService = async (request) => {
@@ -46,6 +49,47 @@ const addProductService = async (request) => {
 
   // add product, color, & size to db
   await prismaClient.product.create({
+    data: data,
+    include: {
+      Product_image: true,
+    },
+  });
+};
+
+const updateProductService = async (productId, request) => {
+  const validatedData = validate(updateProductValidation, request);
+  const countImage = await prismaClient.product_image.count({
+    where: {
+      product_id: productId,
+    },
+  });
+
+  if (validatedData.images.length + countImage > 5) {
+    throw new ResponseError(
+      400,
+      "product-images cannot be more than 5 items",
+      "product-images"
+    );
+  }
+
+  const data = {};
+
+  for (const key in validatedData) {
+    if (key === "images") {
+      data["Product_image"] = {
+        createMany: {
+          data: validatedData[key].map((link) => ({ link: link })),
+        },
+      };
+    } else {
+      validatedData[key] ? (data[key] = validatedData[key]) : "";
+    }
+  }
+
+  await prismaClient.product.update({
+    where: {
+      id: productId,
+    },
     data: data,
     include: {
       Product_image: true,
@@ -133,6 +177,7 @@ const deleteProductService = async (productId) => {
 
 export {
   addProductService,
+  updateProductService,
   getAllProductService,
   getProductByIdService,
   deleteProductService,

@@ -10,4 +10,14 @@ const addProductValidation = Joi.object({
   images: Joi.array().items(Joi.string().required()).max(5).required(),
 });
 
-export { addProductValidation };
+const updateProductValidation = Joi.object({
+  name: Joi.string().max(100).optional(),
+  description: Joi.string().optional(),
+  color: Joi.string().max(50).optional(),
+  size: Joi.string().max(2).optional(),
+  price: Joi.number().optional(),
+  stock: Joi.number().optional(),
+  images: Joi.array().items(Joi.string().optional()).max(5).optional(),
+});
+
+export { addProductValidation, updateProductValidation };

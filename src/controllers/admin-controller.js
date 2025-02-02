@@ -1,4 +1,5 @@
 import {
+  dashboardService,
   getEmailAdminService,
   updatePasswordAdminService,
 } from "../services/admin-service.js";
@@ -22,4 +23,17 @@ const updatePasswordAdminController = async (req, res, next) => {
   }
 };
 
-export default { getEmailAdminController, updatePasswordAdminController };
+const dashboardController = async (req, res, next) => {
+  try {
+    const result = await dashboardService();
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default {
+  getEmailAdminController,
+  updatePasswordAdminController,
+  dashboardController,
+};

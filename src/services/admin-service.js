@@ -54,4 +54,48 @@ const updatePasswordAdminService = async (request) => {
   });
 };
 
-export { getEmailAdminService, updatePasswordAdminService };
+const dashboardService = async () => {
+  const response = {
+    active_user: 0,
+    total_products: 0,
+    total_orders: 0,
+    total_order_complete: 0,
+    total_order_incomplete: 0,
+    total_income: 0,
+  };
+
+  response.active_user = await prismaClient.user.count();
+  response.total_products = await prismaClient.product.count();
+  response.total_orders = await prismaClient.order.count();
+  response.total_order_complete = await prismaClient.order.count({
+    where: {
+      status: "delivered",
+    },
+  });
+  response.total_order_incomplete = await prismaClient.order.count({
+    where: {
+      NOT: {
+        status: "delivered",
+      },
+    },
+  });
+
+  const total_income = await prismaClient.order.findMany({
+    where: {
+      NOT: {
+        status: "rejected",
+      },
+    },
+    select: {
+      price_total: true,
+    },
+  });
+
+  response.total_income = total_income.reduce(
+    (prevValue, currValue) => prevValue.price_total + currValue.price_total
+  );
+
+  return response;
+};
+
+export { getEmailAdminService, updatePasswordAdminService, dashboardService };
