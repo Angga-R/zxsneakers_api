@@ -1,3 +1,4 @@
+import { bucketName, s3 } from "../app/cloud-config.js";
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error-handler/response-error.js";
 import {
@@ -6,7 +7,67 @@ import {
 } from "../validation/product-validation.js";
 import { validate } from "../validation/validate.js";
 
-const addProductService = async (request) => {
+const uploadProductImages = async (productImages) => {
+  const urls = [];
+  const uploadPromises = productImages.map((file) => {
+    const parameter = {
+      Bucket: bucketName,
+      Key: `uploads/product-images/${Date.now()}_${file.originalname}`,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    };
+
+    return new Promise((resolve, reject) => {
+      s3.upload(parameter, (err, data) => {
+        if (!err) {
+          urls.push({ link: data.Location });
+          resolve(data.Location);
+        } else {
+          reject(err);
+        }
+      });
+    });
+  });
+
+  await Promise.all(uploadPromises);
+  return urls;
+};
+
+const deleteProductImg = async (productId, imageId) => {
+  if (!imageId) {
+    const linkImg = await prismaClient.product_image.findMany({
+      where: {
+        product_id: productId,
+      },
+    });
+
+    linkImg.map(async (value) => {
+      const parameter = {
+        Bucket: bucketName,
+        Key: value.link.split(".com/")[1],
+      };
+      await s3.deleteObject(parameter).promise();
+    });
+  } else {
+    const linkImg = await prismaClient.product_image.findUnique({
+      where: {
+        product_id: productId,
+        id: imageId,
+      },
+    });
+
+    const key = linkImg.link.split(".com/")[1];
+
+    const parameter = {
+      Bucket: bucketName,
+      Key: key,
+    };
+
+    await s3.deleteObject(parameter).promise();
+  }
+};
+
+const addProductService = async (request, productImages) => {
   const validatedData = validate(addProductValidation, request);
 
   const generateSKU = async () => {
@@ -26,14 +87,7 @@ const addProductService = async (request) => {
     return `ZXS-${color}-${validatedData.size}-${id}`;
   };
 
-  const images = [];
-
-  // add image to images
-  for (const image of validatedData.images) {
-    images.push({ link: image });
-  }
-
-  delete validatedData["images"];
+  const images = await uploadProductImages(productImages);
 
   const data = {
     sku: await generateSKU(),
@@ -56,7 +110,7 @@ const addProductService = async (request) => {
   });
 };
 
-const updateProductService = async (productId, request) => {
+const updateProductService = async (productId, request, productImages) => {
   const validatedData = validate(updateProductValidation, request);
   const countImage = await prismaClient.product_image.count({
     where: {
@@ -64,7 +118,7 @@ const updateProductService = async (productId, request) => {
     },
   });
 
-  if (validatedData.images.length + countImage > 5) {
+  if (productImages.length + countImage > 5) {
     throw new ResponseError(
       400,
       "product-images cannot be more than 5 items",
@@ -75,16 +129,15 @@ const updateProductService = async (productId, request) => {
   const data = {};
 
   for (const key in validatedData) {
-    if (key === "images") {
-      data["Product_image"] = {
-        createMany: {
-          data: validatedData[key].map((link) => ({ link: link })),
-        },
-      };
-    } else {
-      validatedData[key] ? (data[key] = validatedData[key]) : "";
-    }
+    validatedData[key] ? (data[key] = validatedData[key]) : "";
   }
+
+  const linkImg = await uploadProductImages(productImages);
+  data["Product_image"] = {
+    createMany: {
+      data: linkImg,
+    },
+  };
 
   await prismaClient.product.update({
     where: {
@@ -167,7 +220,26 @@ const getProductByIdService = async (productId) => {
   return product;
 };
 
+const deleteProductImgService = async (productId, imageId) => {
+  await deleteProductImg(productId, imageId);
+
+  await prismaClient.product_image.delete({
+    where: {
+      product_id: productId,
+      id: imageId,
+    },
+  });
+};
+
 const deleteProductService = async (productId) => {
+  await deleteProductImg(productId);
+
+  await prismaClient.product_image.deleteMany({
+    where: {
+      product_id: productId,
+    },
+  });
+
   await prismaClient.product.delete({
     where: {
       id: productId,
@@ -180,5 +252,6 @@ export {
   updateProductService,
   getAllProductService,
   getProductByIdService,
+  deleteProductImgService,
   deleteProductService,
 };

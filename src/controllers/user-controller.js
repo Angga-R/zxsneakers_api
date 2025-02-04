@@ -25,7 +25,7 @@ const updateNameController = async (req, res, next) => {
 
 const updateAvatarController = async (req, res, next) => {
   try {
-    await updateAvatarService(req.file.cloudUrl, req.userEmail);
+    await updateAvatarService(req.userEmail, req.file);
 
     res.sendStatus(200);
   } catch (error) {

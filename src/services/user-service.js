@@ -1,3 +1,4 @@
+import { bucketName, s3 } from "../app/cloud-config.js";
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error-handler/response-error.js";
 import {
@@ -6,6 +7,41 @@ import {
 } from "../validation/user-validation.js";
 import { validate } from "../validation/validate.js";
 import bcrypt from "bcrypt";
+
+const uploadUserImg = async (image) => {
+  const parameter = {
+    Bucket: bucketName,
+    Key: `uploads/avatar/${Date.now()}_${image.originalname}`,
+    Body: image.buffer,
+    ContentType: image.mimetype,
+  };
+
+  const url = await s3
+    .upload(parameter, (err, data) => {
+      if (!err) {
+        return data;
+      }
+    })
+    .promise();
+
+  return url.Location;
+};
+
+const deleteUserImg = async (userEmail) => {
+  const linkImg = await prismaClient.user.findUnique({
+    where: {
+      email: userEmail,
+    },
+  });
+  const key = linkImg.avatar.split(".com/")[1];
+
+  const parameter = {
+    Bucket: bucketName,
+    Key: key,
+  };
+
+  await s3.deleteObject(parameter).promise();
+};
 
 const getUserDetailService = async (userEmail) => {
   return prismaClient.user.findFirst({
@@ -84,14 +120,18 @@ const updateNameService = async (newName, userEmail) => {
   });
 };
 
-const updateAvatarService = async (linkImg, userEmail) => {
+const updateAvatarService = async (userEmail, image) => {
+  await deleteUserImg(userEmail);
+
+  const url = await uploadUserImg(image);
+
   // update profile
   await prismaClient.user.update({
     where: {
       email: userEmail,
     },
     data: {
-      avatar: linkImg,
+      avatar: url,
     },
   });
 };

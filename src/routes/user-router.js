@@ -19,7 +19,6 @@ userRouter.put("/users/name/update", userController.updateNameController);
 userRouter.post(
   "/users/avatar/update",
   filterImg.single("image"),
-  upload,
   userController.updateAvatarController
 );
 userRouter.get("/users/detail", userController.getUserDetailController);

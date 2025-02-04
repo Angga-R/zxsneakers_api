@@ -1,5 +1,6 @@
 import {
   addProductService,
+  deleteProductImgService,
   deleteProductService,
   getAllProductService,
   getProductByIdService,
@@ -8,8 +9,7 @@ import {
 
 const addProductController = async (req, res, next) => {
   try {
-    req.body["images"] = req.files.cloudUrl;
-    await addProductService(req.body);
+    await addProductService(req.body, req.files);
     res.sendStatus(200);
   } catch (error) {
     next(error);
@@ -18,8 +18,11 @@ const addProductController = async (req, res, next) => {
 
 const updateProductController = async (req, res, next) => {
   try {
-    req.body["images"] = req.files.cloudUrl;
-    await updateProductService(Number(req.params.productId), req.body);
+    await updateProductService(
+      Number(req.params.productId),
+      req.body,
+      req.files
+    );
     res.sendStatus(200);
   } catch (error) {
     next(error);
@@ -49,6 +52,19 @@ const getProductByIdController = async (req, res, next) => {
   }
 };
 
+const deleteProductImgController = async (req, res, next) => {
+  try {
+    await deleteProductImgService(
+      Number(req.params.productId),
+      Number(req.params.imgId)
+    );
+
+    res.sendStatus(200);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const deleteProductController = async (req, res, next) => {
   try {
     await deleteProductService(Number(req.params.productId));
@@ -64,5 +80,6 @@ export default {
   updateProductController,
   getAllProductController,
   getProductByIdController,
+  deleteProductImgController,
   deleteProductController,
 };

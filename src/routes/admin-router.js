@@ -31,7 +31,6 @@ adminRouter.post(
   "/product/add",
   isAdmin,
   filterImg.array("product-images", 5),
-  upload,
   productController.addProductController
 );
 
@@ -39,8 +38,13 @@ adminRouter.put(
   "/product/:productId/update",
   isAdmin,
   filterImg.array("product-images", 5),
-  upload,
   productController.updateProductController
+);
+
+adminRouter.delete(
+  "/product/:productId/delete-img/:imgId",
+  isAdmin,
+  productController.deleteProductImgController
 );
 
 adminRouter.delete(
