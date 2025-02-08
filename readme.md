@@ -5,8 +5,8 @@ This is my self-project using Express NodeJS
 ### What is ZXSneakers?
 
 _ZXSneakers_ is an online shoes store that i created for my school assignment (make a landing page) when i was in vocational high school (Software Engineer).
-You can see here : https://zxsneakers.netlify.app/
-GitHub repository : https://github.com/Angga-R/zxsneakers.git
+<br>You can see here : https://zxsneakers.netlify.app/
+<br>GitHub repository : https://github.com/Angga-R/zxsneakers.git
 
 ### References
 
