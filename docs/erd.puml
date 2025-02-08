@@ -4,6 +4,7 @@ entity Users {
  --
  name : String(20)
  password : String(100)
+ avatar : String(191)
 }
 
 entity Admin {
@@ -15,43 +16,31 @@ entity Admin {
 entity Products {
  Id : Int <PK>
  --
+ sku : String(100)
  name : String(100)
- price : Int
- stock : Int
+ description : Text
+ color : String(50)
+ size : String(2)
+ price : Int(11)
+ stock : Int(11)
  created_at : Datatime
  updated_at : Datetime
 }
 
-entity Product_sizes {
- id : Int (AI) <PK>
- id_product : Int <FK>
- --
- size : Int
-}
-
-entity Product_color {
- id : Int (AI) <PK>
- id_product : Int <FK>
- --
- color : String(20)
-}
-
 entity Product_images {
- id Int (AI) <PK>
- id_product : Int <FK>
+ id : Int (AI) <PK>
+ product_id : Int <FK>
  --
- name : String(100)
- format : String(4)
- data_image : BLOB
+ link : String(191)
 }
 
 entity Addresses {
  id : Int (AI) <PK>
  --
- email_user : String <FK>
+ user_email : String <FK>
  --
  no_telp : String(20)
- postal_code : Int
+ postal_code : Int(11)
  street : String(100)
  sub_distric : String(100)
  city : String(100)
@@ -59,53 +48,50 @@ entity Addresses {
  country : String(100)
 }
 
-entity User_profile_image {
+object Carts {
+ email_user : String <FK>
+ product_id : Int <FK>
+}
+
+object Orders {
+ id : String <PK>
  user_email : String <FK>
+ address_id : Int <FK>
  --
- name : String(100)
- format : String(4)
- data_image : BLOB
-}
-
-object Wishlistes {
- email_user : String <FK>
- id_product : Int <FK>
-}
-
-object Buy {
- id_product : Int <FK>
- email_user : String <FK>
- --
- quantity : Int
  price_total : Int
- id : Int
- buying_time : Datetime
+ created_at : Datetime
+ status : String
+}
+
+object Order_details {
+ id : Int AI <PK>
+ order_id : String <FK>
+ product_id : Int <FK>
+ --
+ price_item : Int
+ quantity : Int
+ subtotal : Int
 }
 
 Users ||--o{ Addresses
 note on link
     Have
 end note
-Users ||--o| User_profile_image
-note on link
-    Have
-end note
-Products ||--|{ Product_sizes
-note on link
-    Have
-end note
-Products ||--|{ Product_color
-note on link
-    Have
-end note
+
 Products ||--|{ Product_images
 note on link
     Have
 end note
-Users }o-- Buy
-Buy --|{ Products
-Users }o-- Wishlistes
-Wishlistes --|{ Products
+
+Users }o-- Carts
+Carts --|{ Products
+
+Users }o-- Orders
+Orders }|--|| Addresses
+
+Order_details --|{ Products
+Orders ||--|{ Order_details
+
 Admin --> Products
 note on link
     Add, Delete, Update
