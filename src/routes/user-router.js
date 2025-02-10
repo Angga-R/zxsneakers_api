@@ -1,7 +1,7 @@
 import express from "express";
 import { verifToken, isUser } from "../middleware/auth-middleware.js";
 import userController from "../controllers/user-controller.js";
-import { filterImg, upload } from "../middleware/uploadPicture-middleware.js";
+import { filterImg } from "../middleware/uploadPicture-middleware.js";
 import addressController from "../controllers/address-controller.js";
 import cartController from "../controllers/cart-controller.js";
 import orderController from "../controllers/order-controller.js";

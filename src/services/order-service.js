@@ -1,14 +1,14 @@
 import Midtrans from "midtrans-client";
 import { prismaClient, redisClient } from "../app/database.js";
-import { createOrderValidation } from "../validation/order-validation.js";
-import { validate } from "../validation/validate.js";
+import { validate } from "../utils/validations/validate.js";
+import orderValidation from "../utils/validations/order.validation.js";
 import "dotenv";
 import moment from "moment";
 import { ResponseError } from "../error-handler/response-error.js";
 import { v4 as uuid } from "uuid";
 
 const createOrderService = async (request, userEmail) => {
-  const validatedData = validate(createOrderValidation, request);
+  const validatedData = validate(orderValidation.create, request);
   const data = [];
   let product;
 

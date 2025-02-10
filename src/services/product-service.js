@@ -1,11 +1,8 @@
 import { bucketName, s3 } from "../app/cloud-config.js";
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error-handler/response-error.js";
-import {
-  addProductValidation,
-  updateProductValidation,
-} from "../validation/product-validation.js";
-import { validate } from "../validation/validate.js";
+import { validate } from "../utils/validations/validate.js";
+import productValidation from "../utils/validations/product.validation.js";
 
 const uploadProductImages = async (productImages) => {
   const urls = [];
@@ -68,7 +65,7 @@ const deleteProductImg = async (productId, imageId) => {
 };
 
 const addProductService = async (request, productImages) => {
-  const validatedData = validate(addProductValidation, request);
+  const validatedData = validate(productValidation.add, request);
 
   const generateSKU = async () => {
     const checkProduct = await prismaClient.product.findMany();
@@ -111,7 +108,7 @@ const addProductService = async (request, productImages) => {
 };
 
 const updateProductService = async (productId, request, productImages) => {
-  const validatedData = validate(updateProductValidation, request);
+  const validatedData = validate(productValidation.update, request);
   const countImage = await prismaClient.product_image.count({
     where: {
       product_id: productId,

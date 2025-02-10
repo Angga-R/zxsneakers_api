@@ -1,7 +1,7 @@
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error-handler/response-error.js";
-import { addressValidation } from "../validation/address-validation.js";
-import { validate } from "../validation/validate.js";
+import addressValidation from "../utils/validations/address.validation.js";
+import { validate } from "../utils/validations/validate.js";
 
 const getAddressService = async (userEmail) => {
   const result = await prismaClient.address.findMany({
@@ -23,7 +23,7 @@ const getAddressService = async (userEmail) => {
 };
 
 const addAddressService = async (request, userEmail) => {
-  const validatedData = validate(addressValidation, request);
+  const validatedData = validate(addressValidation.add, request);
 
   const data = {
     user_email: userEmail,
@@ -51,7 +51,7 @@ const getAddressByIdService = async (addressId, userEmail) => {
 };
 
 const updateAddressService = async (request, addressId, userEmail) => {
-  const validatedData = validate(addressValidation, request);
+  const validatedData = validate(addressValidation.add, request);
 
   await prismaClient.address.update({
     where: {

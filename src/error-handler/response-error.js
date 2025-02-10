@@ -1,7 +1,7 @@
 export class ResponseError extends Error {
   constructor(status, messages, fields) {
     const errorObject = {};
-    if (fields) {
+    if (fields && fields[0] !== undefined) {
       if (Array.isArray(fields) === false) {
         errorObject[fields] = messages;
       } else {

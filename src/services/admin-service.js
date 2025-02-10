@@ -1,7 +1,7 @@
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error-handler/response-error.js";
-import { updatePasswordAdminValidation } from "../validation/admin-validation.js";
-import { validate } from "../validation/validate.js";
+import adminValidation from "../utils/validations/admin.validation.js";
+import { validate } from "../utils/validations/validate.js";
 import bcrypt from "bcrypt";
 
 const getEmailAdminService = async () => {
@@ -23,7 +23,7 @@ const updatePasswordAdminService = async (request) => {
     throw new ResponseError(400, "incorrect old password", "oldPassword");
   }
 
-  const validatedData = validate(updatePasswordAdminValidation, request);
+  const validatedData = validate(adminValidation.updatePassword, request);
 
   if (validatedData.confirmPassword !== validatedData.newPassword) {
     throw new ResponseError(

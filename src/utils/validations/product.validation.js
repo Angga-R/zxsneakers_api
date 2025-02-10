@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-const addProductValidation = Joi.object({
+const add = Joi.object({
   name: Joi.string().max(100).required(),
   description: Joi.string().optional(),
   color: Joi.string().max(50).optional(),
@@ -9,7 +9,7 @@ const addProductValidation = Joi.object({
   stock: Joi.number().required(),
 });
 
-const updateProductValidation = Joi.object({
+const update = Joi.object({
   name: Joi.string().max(100).optional(),
   description: Joi.string().optional(),
   color: Joi.string().max(50).optional(),
@@ -18,4 +18,4 @@ const updateProductValidation = Joi.object({
   stock: Joi.number().optional(),
 });
 
-export { addProductValidation, updateProductValidation };
+export default { add, update };

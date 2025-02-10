@@ -1,11 +1,8 @@
 import { bucketName, s3 } from "../app/cloud-config.js";
 import { prismaClient } from "../app/database.js";
 import { ResponseError } from "../error-handler/response-error.js";
-import {
-  updateNameValidation,
-  updatePasswordValidation,
-} from "../validation/user-validation.js";
-import { validate } from "../validation/validate.js";
+import userValidation from "../utils/validations/user.validation.js";
+import { validate } from "../utils/validations/validate.js";
 import bcrypt from "bcrypt";
 
 const uploadUserImg = async (image) => {
@@ -76,7 +73,7 @@ const updatePasswordService = async (request, userEmail) => {
     throw new ResponseError(400, "incorrect old password", "oldPassword");
   }
 
-  const password = validate(updatePasswordValidation, request);
+  const password = validate(userValidation.updatePassword, request);
 
   // check confirmPassword
   if (password.confirmPassword !== password.newPassword) {
@@ -108,7 +105,7 @@ const updatePasswordService = async (request, userEmail) => {
 };
 
 const updateNameService = async (newName, userEmail) => {
-  newName = validate(updateNameValidation, newName);
+  newName = validate(userValidation.updateName, newName);
 
   await prismaClient.user.update({
     where: {
@@ -121,6 +118,9 @@ const updateNameService = async (newName, userEmail) => {
 };
 
 const updateAvatarService = async (userEmail, image) => {
+  if (!image) {
+    throw new ResponseError(400, "image required");
+  }
   await deleteUserImg(userEmail);
 
   const url = await uploadUserImg(image);
