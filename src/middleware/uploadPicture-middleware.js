@@ -1,5 +1,5 @@
 import multer from "multer";
-import { ResponseError } from "../error-handler/response-error.js";
+import { ResponseError } from "../utils/error_handler/response.error.js";
 
 const filterImg = multer({
   storage: multer.memoryStorage(),

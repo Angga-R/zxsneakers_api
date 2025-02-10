@@ -2,7 +2,6 @@ import express from "express";
 import { verifToken, isLogged } from "../middleware/auth-middleware.js";
 import authController from "../controllers/auth-controller.js";
 import productController from "../controllers/product-controller.js";
-import orderController from "../controllers/order-controller.js";
 
 const publicRouter = new express.Router();
 // auth

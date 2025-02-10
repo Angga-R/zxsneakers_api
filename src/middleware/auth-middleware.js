@@ -1,4 +1,4 @@
-import { ResponseError } from "../error-handler/response-error.js";
+import { ResponseError } from "../utils/error_handler/response.error.js";
 import jwt from "jsonwebtoken";
 import "dotenv";
 import { prismaClient } from "../app/database.js";

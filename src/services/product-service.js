@@ -1,6 +1,6 @@
 import { bucketName, s3 } from "../app/cloud-config.js";
 import { prismaClient } from "../app/database.js";
-import { ResponseError } from "../error-handler/response-error.js";
+import { ResponseError } from "../utils/error_handler/response.error.js";
 import { validate } from "../utils/validations/validate.js";
 import productValidation from "../utils/validations/product.validation.js";
 

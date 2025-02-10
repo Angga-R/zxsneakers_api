@@ -1,5 +1,5 @@
 import { prismaClient } from "../app/database.js";
-import { ResponseError } from "../error-handler/response-error.js";
+import { ResponseError } from "../utils/error_handler/response.error.js";
 
 const addToCartService = async (userEmail, productId) => {
   const checkProduct = await prismaClient.product.count({

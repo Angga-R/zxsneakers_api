@@ -1,5 +1,5 @@
 import { logger } from "../app/logging.js";
-import { ResponseError } from "../error-handler/response-error.js";
+import { ResponseError } from "../utils/error_handler/response.error.js";
 import { Prisma } from "@prisma/client";
 
 export const errorMiddleware = async (err, req, res, next) => {

@@ -4,7 +4,7 @@ import { validate } from "../utils/validations/validate.js";
 import orderValidation from "../utils/validations/order.validation.js";
 import "dotenv";
 import moment from "moment";
-import { ResponseError } from "../error-handler/response-error.js";
+import { ResponseError } from "../utils/error_handler/response.error.js";
 import { v4 as uuid } from "uuid";
 
 const createOrderService = async (request, userEmail) => {
