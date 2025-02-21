@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "My self-project RESTFul API for ZXSneakers",
   "type": "module",
-  "main": "src/main.js",
+  "main": "src/server.js",
   "scripts": {
-    "start": "nodemon src/main.js",
+    "start": "nodemon src/server.js",
     "test": "jest"
   },
   "jest": {
