@@ -1,4 +1,4 @@
-import { bucketName, s3 } from "../utils/config/cloud.config.js";
+import { bucketName, s3 } from "../libs/cloud.s3.js";
 import { prismaClient } from "../config/mysql.config.js";
 import { ResponseError } from "../utils/error_handler/response.error.js";
 import userValidation from "../utils/validations/user.validation.js";
