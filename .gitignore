@@ -3,7 +3,8 @@ test
 migrations
 log
 # Keep environment variables out of version control
-.env
+.env.development
+.env.production
 package-lock.json
 babel.config.json
 test.js

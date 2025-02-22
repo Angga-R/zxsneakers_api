@@ -1,5 +1,6 @@
 import Midtrans from "midtrans-client";
-import { prismaClient, redisClient } from "../app/database.js";
+import { prismaClient } from "../config/mysql.config.js";
+import { redisClient } from "../config/redis.config.js";
 import { validate } from "../utils/validations/validate.js";
 import orderValidation from "../utils/validations/order.validation.js";
 import "dotenv";

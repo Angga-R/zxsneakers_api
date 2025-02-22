@@ -1,4 +1,4 @@
-import { prismaClient } from "../app/database.js";
+import { prismaClient } from "../config/mysql.config.js";
 import { ResponseError } from "../utils/error_handler/response.error.js";
 import addressValidation from "../utils/validations/address.validation.js";
 import { validate } from "../utils/validations/validate.js";

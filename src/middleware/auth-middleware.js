@@ -1,7 +1,7 @@
 import { ResponseError } from "../utils/error_handler/response.error.js";
 import jwt from "jsonwebtoken";
 import "dotenv";
-import { prismaClient } from "../app/database.js";
+import { prismaClient } from "../config/mysql.config.js";
 
 const verifToken = async (req, res, next) => {
   try {

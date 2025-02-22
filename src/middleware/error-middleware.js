@@ -1,4 +1,4 @@
-import { logger } from "../app/logging.js";
+import { logger } from "../libs/logger.js";
 import { ResponseError } from "../utils/error_handler/response.error.js";
 import { Prisma } from "@prisma/client";
 
