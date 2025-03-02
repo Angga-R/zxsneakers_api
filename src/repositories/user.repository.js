@@ -1,6 +1,16 @@
 import { prismaClient } from "../config/mysql.config.js";
 
 class UserRepository {
+  async add(email, name, encryptedPassword) {
+    await prismaClient.user.create({
+      data: {
+        email: email,
+        name: name,
+        password: encryptedPassword,
+      },
+    });
+  }
+
   async findByEmail(email) {
     return prismaClient.user.findUnique({
       where: {

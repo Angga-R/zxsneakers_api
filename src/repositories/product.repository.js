@@ -1,6 +1,9 @@
 import { prismaClient } from "../config/mysql.config.js";
+import { ProductImageRepository } from "./productImage.repository.js";
 
 class ProductRepository {
+  productImage = new ProductImageRepository();
+
   async findAll(searchData, limit, skip, isIncludeProductImage) {
     const query = {};
     if (searchData) {
@@ -130,11 +133,7 @@ class ProductRepository {
   }
 
   async delete(id) {
-    await prismaClient.product_image.deleteMany({
-      where: {
-        product_id: id,
-      },
-    });
+    await this.productImage.deleteByProductId(id);
 
     await prismaClient.product.delete({
       where: {
