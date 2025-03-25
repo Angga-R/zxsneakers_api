@@ -9,18 +9,20 @@ class ProductImageRepository {
     });
   }
 
-  async findById(id) {
+  async findById(productId, imageId) {
     return prismaClient.product_image.findUnique({
       where: {
-        id: id,
+        product_id: productId,
+        id: imageId,
       },
     });
   }
 
-  async delete(id) {
+  async delete(productId, imageId) {
     await prismaClient.product_image.delete({
       where: {
-        id: id,
+        product_id: productId,
+        id: imageId,
       },
     });
   }

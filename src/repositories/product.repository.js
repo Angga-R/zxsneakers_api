@@ -88,9 +88,9 @@ class ProductRepository {
     return prismaClient.product.count(query);
   }
 
-  async add(sku, data, images) {
+  async add(sku, data, imagesUrl) {
     const linkImg = [];
-    for (const link of images) {
+    for (const link of imagesUrl) {
       linkImg.push({ link: link });
     }
     await prismaClient.product.create({

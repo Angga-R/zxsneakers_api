@@ -30,7 +30,15 @@ const logger = winston.createLogger({
           maxFiles: "1d", // 1 day
         }),
       ]
-    : [new winston.transports.Console({})],
+    : [
+        new winston.transports.Console({}),
+        new DailyRotateFile({
+          level: "info",
+          filename: "log/debug/%DATE%.log",
+          maxSize: "1m", // 1MB
+          maxFiles: "1d", // 1 day
+        }),
+      ],
 });
 
 logger.errorWithID = (message, error) => {

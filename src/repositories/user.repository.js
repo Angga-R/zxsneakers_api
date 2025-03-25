@@ -11,6 +11,10 @@ class UserRepository {
     });
   }
 
+  async findAll() {
+    return prismaClient.user.findMany();
+  }
+
   async findByEmail(email) {
     return prismaClient.user.findUnique({
       where: {

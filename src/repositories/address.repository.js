@@ -20,13 +20,25 @@ class AddressRepository {
     });
   }
 
-  async findByIdAndEmail(id, email) {
-    return prismaClient.address.findFirst({
+  async findById(id, email, isIncludeName) {
+    const query = {
       where: {
         id: id,
         user_email: email,
       },
-    });
+    };
+
+    if (isIncludeName) {
+      query["include"] = {
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      };
+    }
+
+    return prismaClient.address.findFirst(query);
   }
 
   async update(id, email, data) {

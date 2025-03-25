@@ -18,6 +18,22 @@ class OrderRepository {
     });
   }
 
+  async findAll() {
+    return prismaClient.order.findMany({
+      include: {
+        Order_detail: {
+          select: {
+            product: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
   async findByEmail(email) {
     return prismaClient.order.findMany({
       where: {
