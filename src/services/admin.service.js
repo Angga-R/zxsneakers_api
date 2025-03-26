@@ -8,19 +8,19 @@ import { validate } from "../utils/validations/validate.js";
 import bcrypt from "bcrypt";
 
 class AdminService {
-  admin = new AdminRepository();
-  user = new UserRepository();
-  product = new ProductRepository();
-  order = new OrderRepository();
+  #admin = new AdminRepository();
+  #user = new UserRepository();
+  #product = new ProductRepository();
+  #order = new OrderRepository();
 
   async getEmail() {
-    const admin = await this.admin.getData();
+    const admin = await this.#admin.getData();
 
     return admin.email;
   }
 
   async updatePassword(request) {
-    const admin = await this.admin.getData();
+    const admin = await this.#admin.getData();
 
     let comparePassword = await bcrypt.compare(
       request.oldPassword,
@@ -51,7 +51,7 @@ class AdminService {
 
     const newPassword = await bcrypt.hash(validatedData.newPassword, 10);
 
-    await this.admin.updatePassword(admin.email, newPassword);
+    await this.#admin.updatePassword(admin.email, newPassword);
   }
 
   async getDashboard() {
@@ -64,14 +64,14 @@ class AdminService {
       total_income: 0,
     };
 
-    const completedOrder = await this.order.findByStatus("delivered");
+    const completedOrder = await this.#order.findByStatus("delivered");
 
-    response.active_user = (await this.user.findAll()).length;
-    response.total_products = await this.product.count();
-    response.total_orders = (await this.order.findAll()).length;
+    response.active_user = (await this.#user.findAll()).length;
+    response.total_products = await this.#product.count();
+    response.total_orders = (await this.#order.findAll()).length;
     response.total_order_complete = completedOrder.length;
     response.total_order_incomplete = (
-      await this.order.findByStatus({ not: "delivered" })
+      await this.#order.findByStatus({ not: "delivered" })
     ).length;
     response.total_income = completedOrder.reduce(
       (prevValue, currValue) => prevValue.price_total + currValue.price_total

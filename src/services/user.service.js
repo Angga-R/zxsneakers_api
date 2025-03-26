@@ -6,16 +6,16 @@ import bcrypt from "bcrypt";
 import { UserRepository } from "../repositories/user.repository.js";
 
 class UserService {
-  user = new UserRepository();
-  cloudStorage = new CloudS3();
+  #user = new UserRepository();
+  #cloudStorage = new CloudS3();
 
   async getUserDetail(email) {
-    return this.user.findByEmail(email);
+    return this.#user.findByEmail(email);
   }
 
   async updatePassword(request, email) {
     // check old password
-    const user = await this.user.findByEmail(email);
+    const user = await this.#user.findByEmail(email);
 
     let comparePassword = await bcrypt.compare(
       request.oldPassword,
@@ -47,13 +47,13 @@ class UserService {
     // encrypt new password
     const encryptedPassword = await bcrypt.hash(password.newPassword, 10);
 
-    await this.user.updatePassword(email, encryptedPassword);
+    await this.#user.updatePassword(email, encryptedPassword);
   }
 
   async updateName(email, newName) {
     newName = validate(userValidation.updateName, newName);
 
-    await this.user.updateName(email, newName);
+    await this.#user.updateName(email, newName);
   }
 
   async updateAvatar(email, image) {
@@ -61,18 +61,18 @@ class UserService {
       throw new ResponseError(400, "image required");
     }
 
-    const user = await this.user.findByEmail(email);
+    const user = await this.#user.findByEmail(email);
 
     // delete old avatar in cloud storage
     if (user.avatar) {
-      await this.cloudStorage.deleteAvatarUser(user.avatar);
+      await this.#cloudStorage.deleteAvatarUser(user.avatar);
     }
 
     // upload new avatar to cloud storage
-    const url = await this.cloudStorage.uploadAvatarUser(image);
+    const url = await this.#cloudStorage.uploadAvatarUser(image);
 
     // update avatar url
-    await this.user.updateAvatar(email, url);
+    await this.#user.updateAvatar(email, url);
   }
 }
 

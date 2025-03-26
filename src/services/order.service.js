@@ -10,10 +10,10 @@ import { AddressRepository } from "../repositories/address.repository.js";
 import { MidtransPG } from "../libs/midtrans.pg.js";
 
 class OrderService {
-  order = new OrderRepository();
-  product = new ProductRepository();
-  address = new AddressRepository();
-  midtrans = new MidtransPG();
+  #order = new OrderRepository();
+  #product = new ProductRepository();
+  #address = new AddressRepository();
+  #midtrans = new MidtransPG();
 
   async create(request, email) {
     const validatedData = validate(orderValidation.create, request);
@@ -24,7 +24,7 @@ class OrderService {
     const orderId = uuid().toString();
 
     validatedData.items.map(async (item) => {
-      product = await this.product.findById(item.productId);
+      product = await this.#product.findById(item.productId);
 
       if (product.stock < item.quantity) {
         throw new ResponseError(
@@ -40,7 +40,7 @@ class OrderService {
     console.info(data); // debug
 
     // find user include address
-    const address = await this.address.findById(
+    const address = await this.#address.findById(
       validatedData.addressId,
       email,
       true
@@ -76,7 +76,7 @@ class OrderService {
       },
     };
 
-    const createTransaction = await this.midtrans.createTransaction(
+    const createTransaction = await this.#midtrans.createTransaction(
       item_details,
       transaction_details,
       customer_details,
@@ -139,7 +139,7 @@ class OrderService {
 
       queryData.price_total = priceTotal;
 
-      const addToDatabase = await this.order.add(queryData);
+      const addToDatabase = await this.#order.add(queryData);
 
       if (addToDatabase) {
         // update stock
@@ -149,7 +149,7 @@ class OrderService {
               decrement: queryData.Order_detail.createMany.data[i].quantity,
             },
           };
-          await this.product.update(
+          await this.#product.update(
             queryData.Order_detail.createMany.data[i].product_id,
             updateProductData
           );
@@ -169,7 +169,7 @@ class OrderService {
       status === "shipping" ||
       status === "delivered"
     ) {
-      await this.order.updateStatus(orderId, status);
+      await this.#order.updateStatus(orderId, status);
     } else {
       throw new ResponseError(400, "invalid status");
     }
@@ -177,7 +177,7 @@ class OrderService {
 
   async getHistory(email) {
     const response = [];
-    const orders = await this.order.findByEmail(email);
+    const orders = await this.#order.findByEmail(email);
 
     if (orders.length < 1) {
       throw new ResponseError(404, "empty data");
@@ -202,7 +202,7 @@ class OrderService {
   }
 
   async detailOrder(orderId, email) {
-    const order = await this.order.findByIdAndEmail(orderId, email);
+    const order = await this.#order.findByIdAndEmail(orderId, email);
 
     if (!order) {
       throw new ResponseError(404, "order not found");
@@ -233,7 +233,7 @@ class OrderService {
   }
 
   async getAllOrder(status) {
-    const orders = await this.order.findByStatus(status ? status : "");
+    const orders = await this.#order.findByStatus(status ? status : "");
 
     if (orders.length < 1) {
       throw new ResponseError(404, "empty data");

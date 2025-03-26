@@ -2,24 +2,24 @@ import AWS from "aws-sdk";
 import "dotenv";
 
 class CloudS3 {
-  s3 = new AWS.S3({
+  #s3 = new AWS.S3({
     endpoint: process.env.CLOUD_R2_ENDPOINT,
     accessKeyId: process.env.CLOUD_R2_ACCESS_KEY,
     secretAccessKey: process.env.CLOUD_R2_SECRET_KEY,
     region: "auto",
   });
 
-  bucketName = "zx-sneakers-bucket";
+  #bucketName = "zx-sneakers-bucket";
 
   async uploadAvatarUser(image) {
     const parameter = {
-      Bucket: this.bucketName,
+      Bucket: this.#bucketName,
       Key: `uploads/avatar/${Date.now()}_${image.originalname}`,
       Body: image.buffer,
       ContentType: image.mimetype,
     };
 
-    const url = await this.s3
+    const url = await this.#s3
       .upload(parameter, (err, data) => {
         if (!err) {
           return data;
@@ -34,18 +34,18 @@ class CloudS3 {
     const key = linkImg.split(".com/")[1];
 
     const parameter = {
-      Bucket: this.bucketName,
+      Bucket: this.#bucketName,
       Key: key,
     };
 
-    await this.s3.deleteObject(parameter).promise();
+    await this.#s3.deleteObject(parameter).promise();
   }
 
   async uploadProductImages(images) {
     const urls = [];
     const uploadPromises = images.map((file) => {
       const parameter = {
-        Bucket: this.bucketName,
+        Bucket: this.#bucketName,
         Key: `uploads/product-images/${Date.now()}_${file.originalname}`,
         Body: file.buffer,
         ContentType: file.mimetype,
@@ -71,20 +71,20 @@ class CloudS3 {
     if (isMoreThanOne) {
       urls.map(async (url) => {
         const parameter = {
-          Bucket: this.bucketName,
+          Bucket: this.#bucketName,
           Key: url.split(".com/")[1],
         };
-        await this.s3.deleteObject(parameter).promise();
+        await this.#s3.deleteObject(parameter).promise();
       });
     } else {
       const key = urls.split(".com/")[1];
 
       const parameter = {
-        Bucket: this.bucketName,
+        Bucket: this.#bucketName,
         Key: key,
       };
 
-      await this.s3.deleteObject(parameter).promise();
+      await this.#s3.deleteObject(parameter).promise();
     }
   }
 }
