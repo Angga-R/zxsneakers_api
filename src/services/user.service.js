@@ -10,12 +10,12 @@ class UserService {
   #cloudStorage = new CloudS3();
 
   async getUserDetail(email) {
-    return this.#user.findByEmail(email);
+    return this.#user.findByEmail(email, false);
   }
 
   async updatePassword(request, email) {
     // check old password
-    const user = await this.#user.findByEmail(email);
+    const user = await this.#user.findByEmail(email, true);
 
     let comparePassword = await bcrypt.compare(
       request.oldPassword,
@@ -61,7 +61,7 @@ class UserService {
       throw new ResponseError(400, "image required");
     }
 
-    const user = await this.#user.findByEmail(email);
+    const user = await this.#user.findByEmail(email, false);
 
     // delete old avatar in cloud storage
     if (user.avatar) {

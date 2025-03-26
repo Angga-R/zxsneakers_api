@@ -1,6 +1,7 @@
 import express from "express";
 import { verifToken, isUser } from "../middleware/auth-middleware.js";
-import userController from "../controllers/user-controller.js";
+// import userController from "../controllers/user-controller.js";
+import userController from "../controllers/user.controller.js";
 import { filterImg } from "../middleware/uploadPicture-middleware.js";
 import addressController from "../controllers/address-controller.js";
 import cartController from "../controllers/cart-controller.js";
@@ -11,17 +12,14 @@ userRouter.use(verifToken);
 userRouter.use(isUser);
 
 // user
-userRouter.put(
-  "/users/password/update",
-  userController.updatePasswordController
-);
-userRouter.put("/users/name/update", userController.updateNameController);
+userRouter.put("/users/password/update", userController.updatePassword);
+userRouter.put("/users/name/update", userController.updateName);
 userRouter.post(
   "/users/avatar/update",
   filterImg.single("image"),
-  userController.updateAvatarController
+  userController.updateAvatar
 );
-userRouter.get("/users/detail", userController.getUserDetailController);
+userRouter.get("/users/detail", userController.getUserDetail);
 
 // address
 userRouter.get("/users/address", addressController.getAddressController);

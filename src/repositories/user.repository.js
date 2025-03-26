@@ -15,12 +15,18 @@ class UserRepository {
     return prismaClient.user.findMany();
   }
 
-  async findByEmail(email) {
-    return prismaClient.user.findUnique({
+  async findByEmail(email, isPasswordInclude) {
+    const query = {
       where: {
         email: email,
       },
-    });
+    };
+    if (!isPasswordInclude) {
+      query["include"] = {
+        password: false,
+      };
+    }
+    return prismaClient.user.findUnique(query);
   }
 
   async updateName(email, newName) {
