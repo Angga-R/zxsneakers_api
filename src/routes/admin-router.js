@@ -1,7 +1,8 @@
 import express from "express";
 import { verifToken, isAdmin } from "../middleware/auth-middleware.js";
 import adminController from "../controllers/admin-controller.js";
-import productController from "../controllers/product-controller.js";
+// import productController from "../controllers/product-controller.js";
+import productController from "../controllers/product.controller.js";
 import { filterImg } from "../middleware/uploadPicture-middleware.js";
 import orderController from "../controllers/order-controller.js";
 
@@ -31,26 +32,26 @@ adminRouter.post(
   "/product/add",
   isAdmin,
   filterImg.array("product-images", 5),
-  productController.addProductController
+  productController.add
 );
 
 adminRouter.put(
   "/product/:productId/update",
   isAdmin,
   filterImg.array("product-images", 5),
-  productController.updateProductController
+  productController.update
 );
 
 adminRouter.delete(
   "/product/:productId/delete-img/:imgId",
   isAdmin,
-  productController.deleteProductImgController
+  productController.deleteProductImage
 );
 
 adminRouter.delete(
   "/product/:productId/delete",
   isAdmin,
-  productController.deleteProductController
+  productController.deleteProduct
 );
 
 // order

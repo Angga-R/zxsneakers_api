@@ -1,7 +1,8 @@
 import express from "express";
 import { verifToken, isLogged } from "../middleware/auth-middleware.js";
 import authController from "../controllers/auth-controller.js";
-import productController from "../controllers/product-controller.js";
+// import productController from "../controllers/product-controller.js";
+import productController from "../controllers/product.controller.js";
 
 const publicRouter = new express.Router();
 // auth
@@ -17,10 +18,7 @@ publicRouter.delete(
   authController.logoutController
 );
 // product
-publicRouter.get("/product", productController.getAllProductController);
-publicRouter.get(
-  "/product/:productId",
-  productController.getProductByIdController
-);
+publicRouter.get("/product", productController.getAll);
+publicRouter.get("/product/:productId", productController.getProductById);
 
 export { publicRouter };
