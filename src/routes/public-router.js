@@ -6,17 +6,18 @@ import productController from "../controllers/product.controller.js";
 
 const publicRouter = new express.Router();
 // auth
-publicRouter.post(
-  "/auth/register",
-  isLogged,
-  authController.registerController
-);
-publicRouter.post("/auth/login", isLogged, authController.loginController);
-publicRouter.delete(
-  "/auth/logout",
-  verifToken,
-  authController.logoutController
-);
+// publicRouter.post(
+//   "/auth/register",
+//   isLogged,
+//   authController.registerController
+// );
+// publicRouter.post("/auth/login", isLogged, authController.loginController);
+// publicRouter.delete(
+//   "/auth/logout",
+//   verifToken,
+//   authController.logoutController
+// );
+
 // product
 publicRouter.get("/product", productController.getAll);
 publicRouter.get("/product/:productId", productController.getProductById);

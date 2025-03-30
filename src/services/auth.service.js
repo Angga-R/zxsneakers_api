@@ -48,7 +48,7 @@ class AuthService {
         validatedData.email
       );
     } else {
-      const findUser = await this.#user.findByEmail(validatedData.email);
+      const findUser = await this.#user.findByEmail(validatedData.email, true);
 
       if (!findUser) {
         throw new ResponseError(400, "email not registered", "email");
@@ -63,4 +63,4 @@ class AuthService {
   }
 }
 
-export { AuthService };
+export default new AuthService();
