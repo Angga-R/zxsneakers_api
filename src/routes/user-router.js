@@ -12,30 +12,30 @@ userRouter.use(verifToken);
 userRouter.use(isUser);
 
 // user
-userRouter.put("/users/password/update", userController.updatePassword);
-userRouter.put("/users/name/update", userController.updateName);
-userRouter.post(
-  "/users/avatar/update",
-  filterImg.single("image"),
-  userController.updateAvatar
-);
-userRouter.get("/users/detail", userController.getUserDetail);
+// userRouter.put("/users/password/update", userController.updatePassword);
+// userRouter.put("/users/name/update", userController.updateName);
+// userRouter.post(
+//   "/users/avatar/update",
+//   filterImg.single("image"),
+//   userController.updateAvatar
+// );
+// userRouter.get("/users/detail", userController.getUserDetail);
 
 // address
-userRouter.get("/users/address", addressController.getAddressController);
-userRouter.post("/users/address/add", addressController.addAddressController);
-userRouter.get(
-  "/users/address/:addressId",
-  addressController.getAddressByIdController
-);
-userRouter.put(
-  "/users/address/:addressId/update",
-  addressController.updateAddressController
-);
-userRouter.delete(
-  "/users/address/:addressId/delete",
-  addressController.deleteAddressController
-);
+// userRouter.get("/users/address", addressController.getAddressController);
+// userRouter.post("/users/address/add", addressController.addAddressController);
+// userRouter.get(
+//   "/users/address/:addressId",
+//   addressController.getAddressByIdController
+// );
+// userRouter.put(
+//   "/users/address/:addressId/update",
+//   addressController.updateAddressController
+// );
+// userRouter.delete(
+//   "/users/address/:addressId/delete",
+//   addressController.deleteAddressController
+// );
 
 // cart
 userRouter.post("/cart/add/:productId", cartController.addToCartController);

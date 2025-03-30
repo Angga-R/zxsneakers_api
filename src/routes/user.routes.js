@@ -14,6 +14,6 @@ router.post(
   filterImg.single("image"),
   userController.updateAvatar
 );
-router.get("users/detail", userController.getUserDetail);
+router.get("/users/detail", userController.getUserDetail);
 
 export default router;
