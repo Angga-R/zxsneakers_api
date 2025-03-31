@@ -37,13 +37,13 @@ userRouter.use(isUser);
 //   addressController.deleteAddressController
 // );
 
-// cart
-userRouter.post("/cart/add/:productId", cartController.addToCartController);
-userRouter.get("/cart", cartController.getCartController);
-userRouter.delete(
-  "/cart/:productId/delete",
-  cartController.deleteProductInCartController
-);
+// // cart
+// userRouter.post("/cart/add/:productId", cartController.addToCartController);
+// userRouter.get("/cart", cartController.getCartController);
+// userRouter.delete(
+//   "/cart/:productId/delete",
+//   cartController.deleteProductInCartController
+// );
 
 // order
 userRouter.post("/order/create", orderController.createOrderController);

@@ -7,9 +7,9 @@ class CartService {
   #product = new ProductRepository();
 
   async add(email, productId) {
-    const checkProduct = await this.#product.findById(productId);
+    const checkProduct = await this.#product.findById(productId, false);
 
-    if (checkProduct) {
+    if (!checkProduct) {
       throw new ResponseError(404, "product not found");
     }
 
@@ -34,4 +34,4 @@ class CartService {
   }
 }
 
-export { CartService };
+export default new CartService();
