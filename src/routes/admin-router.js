@@ -10,22 +10,22 @@ const adminRouter = new express.Router();
 
 adminRouter.use(verifToken);
 
-adminRouter.get(
-  "/admin/dashboard",
-  isAdmin,
-  adminController.dashboardController
-);
+// adminRouter.get(
+//   "/admin/dashboard",
+//   isAdmin,
+//   adminController.dashboardController
+// );
 
-adminRouter.get(
-  "/admin/email",
-  isAdmin,
-  adminController.getEmailAdminController
-);
-adminRouter.put(
-  "/admin/password/update",
-  isAdmin,
-  adminController.updatePasswordAdminController
-);
+// adminRouter.get(
+//   "/admin/email",
+//   isAdmin,
+//   adminController.getEmailAdminController
+// );
+// adminRouter.put(
+//   "/admin/password/update",
+//   isAdmin,
+//   adminController.updatePasswordAdminController
+// );
 
 // product
 adminRouter.post(
@@ -55,10 +55,10 @@ adminRouter.delete(
 );
 
 // order
-adminRouter.post(
-  "/order/:orderId/status",
-  isAdmin,
-  orderController.changeStatusController
-);
-adminRouter.get("/order/all", isAdmin, orderController.getAllOrderController);
+// adminRouter.post(
+//   "/order/:orderId/status",
+//   isAdmin,
+//   orderController.changeStatusController
+// );
+// adminRouter.get("/order/all", isAdmin, orderController.getAllOrderController);
 export { adminRouter };

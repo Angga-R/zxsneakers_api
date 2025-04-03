@@ -73,12 +73,21 @@ class AdminService {
     response.total_order_incomplete = (
       await this.#order.findByStatus({ not: "delivered" })
     ).length;
-    response.total_income = completedOrder.reduce(
-      (prevValue, currValue) => prevValue.price_total + currValue.price_total
-    );
+    if (completedOrder.length != 0) {
+      if (completedOrder.length > 1) {
+        response.total_income = completedOrder.reduce(
+          (prevValue, currValue) =>
+            prevValue.price_total + currValue.price_total
+        );
+      } else {
+        response.total_income = completedOrder[0].price_total;
+      }
+    } else {
+      response.total_income = 0;
+    }
 
     return response;
   }
 }
 
-export { AdminService };
+export default new AdminService();

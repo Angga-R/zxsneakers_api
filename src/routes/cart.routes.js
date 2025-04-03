@@ -4,10 +4,13 @@ import { isUser, verifToken } from "../middleware/auth-middleware.js";
 
 const router = Router();
 router.use(verifToken);
-router.use(isUser);
 
-router.post("/cart/add/:productId", cartController.addToCart);
-router.get("/cart", cartController.getCart);
-router.delete("/cart/:productId/delete", cartController.removeProductFromCart);
+router.post("/cart/add/:productId", isUser, cartController.addToCart);
+router.get("/cart", isUser, cartController.getCart);
+router.delete(
+  "/cart/:productId/delete",
+  isUser,
+  cartController.removeProductFromCart
+);
 
 export default router;

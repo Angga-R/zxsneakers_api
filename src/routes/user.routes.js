@@ -5,15 +5,15 @@ import { filterImg } from "../middleware/uploadPicture-middleware.js";
 
 const router = Router();
 router.use(verifToken);
-router.use(isUser);
 
-router.put("/users/password/update", userController.updatePassword);
-router.put("/users/name/update", userController.updateName);
+router.put("/users/password/update", isUser, userController.updatePassword);
+router.put("/users/name/update", isUser, userController.updateName);
 router.post(
   "/users/avatar/update",
+  isUser,
   filterImg.single("image"),
   userController.updateAvatar
 );
-router.get("/users/detail", userController.getUserDetail);
+router.get("/users/detail", isUser, userController.getUserDetail);
 
 export default router;

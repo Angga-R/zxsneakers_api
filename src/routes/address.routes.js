@@ -4,12 +4,23 @@ import { isUser, verifToken } from "../middleware/auth-middleware.js";
 
 const router = Router();
 router.use(verifToken);
-router.use(isUser);
 
-router.get("/users/address", addressController.getAll);
-router.get("/users/address/:addressId", addressController.getAddressById);
-router.post("/users/address/add", addressController.add);
-router.put("/users/address/:addressId/update", addressController.update);
-router.delete("/users/address/:addressId/delete", addressController.delete);
+router.get("/users/address", isUser, addressController.getAll);
+router.get(
+  "/users/address/:addressId",
+  isUser,
+  addressController.getAddressById
+);
+router.post("/users/address/add", isUser, addressController.add);
+router.put(
+  "/users/address/:addressId/update",
+  isUser,
+  addressController.update
+);
+router.delete(
+  "/users/address/:addressId/delete",
+  isUser,
+  addressController.delete
+);
 
 export default router;

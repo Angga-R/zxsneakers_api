@@ -1,24 +1,28 @@
 import { Router } from "express";
 import orderController from "../controllers/order.controller.js";
-import orderControllerTest from "../controllers/order-controller.js";
-import { isUser, verifToken } from "../middleware/auth-middleware.js";
+import { isAdmin, isUser, verifToken } from "../middleware/auth-middleware.js";
 
 const router = Router();
+router.use(verifToken);
 
 // user
-router.post("/order/create", verifToken, isUser, orderController.create);
+router.post("/order/create", isUser, orderController.create);
 router.post(
   "/order/:orderId/paid",
-  verifToken,
+
   isUser,
   orderController.transactionSuccess
 );
-router.get("/order/history", verifToken, isUser, orderController.getHistory);
+router.get("/order/history", isUser, orderController.getHistory);
 router.get(
   "/order/:orderId/detail",
-  verifToken,
+
   isUser,
   orderController.detailOrder
 );
+
+// admin
+router.post("/order/:orderId/status", isAdmin, orderController.changeStatus);
+router.get("/order/all", isAdmin, orderController.getAllOrder);
 
 export default router;

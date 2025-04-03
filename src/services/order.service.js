@@ -229,7 +229,7 @@ class OrderService {
   }
 
   async getAllOrder(status) {
-    const orders = await this.#order.findByStatus(status ? status : "");
+    const orders = await this.#order.findByStatus(status);
 
     if (orders.length < 1) {
       throw new ResponseError(404, "empty data");
