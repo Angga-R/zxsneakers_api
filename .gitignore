@@ -1,5 +1,5 @@
 node_modules
-# tests
+tests
 migrations
 log
 # Keep environment variables out of version control
