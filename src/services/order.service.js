@@ -21,7 +21,7 @@ class OrderService {
     let product;
     const item_details = [];
     const gross_amount = [];
-    const orderId = uuid().toString();
+    const orderId = "zxs-" + uuid().toString();
 
     validatedData.items.map(async (item) => {
       product = await this.#product.findById(item.productId, false);
