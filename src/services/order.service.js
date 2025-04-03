@@ -24,7 +24,7 @@ class OrderService {
     const orderId = uuid().toString();
 
     validatedData.items.map(async (item) => {
-      product = await this.#product.findById(item.productId);
+      product = await this.#product.findById(item.productId, false);
 
       if (product.stock < item.quantity) {
         throw new ResponseError(
@@ -33,12 +33,8 @@ class OrderService {
           "quantity"
         );
       }
-
-      console.info(product); // debug
       data.push(product);
     });
-    console.info(data); // debug
-
     // find user include address
     const address = await this.#address.findById(
       validatedData.addressId,
@@ -269,4 +265,4 @@ class OrderService {
   }
 }
 
-export { OrderService };
+export default new OrderService();

@@ -3,15 +3,6 @@ import "dotenv";
 import moment from "moment";
 
 export class MidtransPG {
-  #clientKey = process.env.MIDTRANS_CLIENT_KEY;
-  #snap = new Midtrans.Snap({
-    // isProduction: process.env.NODE_ENV === "production" ? true : false,
-    isProduction: false,
-    serverKey: process.env.MIDTRANS_SERVER_KEY,
-    clientKey: this.#clientKey,
-  });
-  #snap_url = "https://app.sandbox.midtrans.com/snap/snap.js";
-
   async createTransaction(
     item_details = [
       {
@@ -30,6 +21,13 @@ export class MidtransPG {
     },
     finishUrl
   ) {
+    const snap = new Midtrans.Snap({
+      // isProduction: process.env.NODE_ENV === "production" ? true : false,
+      isProduction: false,
+      serverKey: process.env.MIDTRANS_SERVER_KEY,
+      clientKey: process.env.MIDTRANS_CLIENT_KEY,
+    });
+
     const parameter = {
       item_details: item_details,
       transaction_details: transaction_details,
@@ -66,12 +64,12 @@ export class MidtransPG {
       },
     };
 
-    const token = await this.#snap.createTransactionToken(parameter);
+    const token = await snap.createTransactionToken(parameter);
 
     return {
       snap_token: token,
-      snap_url: this.#snap_url,
-      clientKey: this.#clientKey,
+      snap_url: "https://app.sandbox.midtrans.com/snap/snap.js", // sandbox
+      clientKey: process.env.MIDTRANS_CLIENT_KEY,
     };
   }
 }

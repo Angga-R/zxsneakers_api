@@ -62,7 +62,7 @@ class ProductRepository {
       };
     }
 
-    return prismaClient.product.findUnique(query);
+    return prismaClient.product.findFirst(query);
   }
 
   async count(searchData) {
