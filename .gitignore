@@ -1,5 +1,5 @@
 node_modules
-tests
+# tests
 migrations
 log
 # Keep environment variables out of version control
@@ -7,5 +7,3 @@ log
 .env.development
 .env.production
 package-lock.json
-babel.config.json
-test.js
