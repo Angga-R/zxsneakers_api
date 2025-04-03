@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { verifToken, isAdmin } from "../middleware/auth-middleware.js";
+import { verifToken, isAdmin } from "../middleware/auth.middleware.js";
 import adminController from "../controllers/admin.controller.js";
 
 const router = Router();

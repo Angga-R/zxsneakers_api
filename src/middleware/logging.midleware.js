@@ -1,4 +1,3 @@
-import winston, { format } from "winston";
 import { logger } from "../libs/logger.js";
 
 export const loggingMiddleware = (req, res, next) => {

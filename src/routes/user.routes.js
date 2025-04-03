@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { isUser, verifToken } from "../middleware/auth-middleware.js";
+import { isUser, verifToken } from "../middleware/auth.middleware.js";
 import userController from "../controllers/user.controller.js";
-import { filterImg } from "../middleware/uploadPicture-middleware.js";
+import { filterImg } from "../middleware/filterImage.middleware.js";
 
 const router = Router();
 router.use(verifToken);

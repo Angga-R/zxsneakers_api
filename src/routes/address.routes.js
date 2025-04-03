@@ -1,6 +1,6 @@
 import { Router } from "express";
 import addressController from "../controllers/address.controller.js";
-import { isUser, verifToken } from "../middleware/auth-middleware.js";
+import { isUser, verifToken } from "../middleware/auth.middleware.js";
 
 const router = Router();
 router.use(verifToken);
