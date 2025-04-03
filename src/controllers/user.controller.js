@@ -1,4 +1,3 @@
-import { updateAvatarService } from "../services/user-service.js";
 import userService from "../services/user.service.js";
 
 class UserController {
@@ -22,7 +21,7 @@ class UserController {
 
   async updateAvatar(req, res, next) {
     try {
-      await updateAvatarService(req.userEmail, req.file);
+      await userService.updateAvatar(req.userEmail, req.file);
       res.sendStatus(200);
     } catch (error) {
       next(error);

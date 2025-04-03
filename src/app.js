@@ -1,7 +1,5 @@
 import express from "express";
 import cors from "cors";
-import { publicRouter } from "./routes/public-router.js";
-import { adminRouter } from "./routes/admin-router.js";
 import { errorMiddleware } from "./middleware/error-middleware.js";
 import router from "./routes/index.js";
 import cookieParser from "cookie-parser";
@@ -26,7 +24,5 @@ if (config.logging.level === "debug") {
   app.use(loggingMiddleware);
 }
 app.use(router);
-app.use(publicRouter);
-app.use(adminRouter);
 app.use(errorMiddleware);
 app.use(cookieParser());

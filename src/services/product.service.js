@@ -1,4 +1,4 @@
-import { CloudS3 } from "../libs/cloud.s3.js";
+import awsCloud from "../libs/aws.cloud.js";
 import { ResponseError } from "../utils/error_handler/response.error.js";
 import { validate } from "../utils/validations/validate.js";
 import productValidation from "../utils/validations/product.validation.js";
@@ -8,7 +8,6 @@ import { ProductImageRepository } from "../repositories/productImage.repository.
 class ProductService {
   #product = new ProductRepository();
   #productImage = new ProductImageRepository();
-  #CloudS3 = new CloudS3();
 
   async add(request, productImages) {
     const validatedData = validate(productValidation.add, request);
@@ -32,7 +31,7 @@ class ProductService {
     };
 
     // upload product images to cloud storage
-    const imagesUrl = await this.#CloudS3.uploadProductImages(productImages);
+    const imagesUrl = await awsCloud.uploadProductImages(productImages);
 
     // add data to db
     await this.#product.add(await generateSKU(), validatedData, imagesUrl);
@@ -58,7 +57,7 @@ class ProductService {
     }
 
     // upload product images to cloud storage
-    const imagesUrl = await this.#CloudS3.uploadProductImages(productImages);
+    const imagesUrl = await awsCloud.uploadProductImages(productImages);
 
     // update data product in db
     await this.#product.update(productId, data, imagesUrl);
@@ -88,7 +87,7 @@ class ProductService {
   }
 
   async getProductById(productId) {
-    const product = await this.#product.findById(productId);
+    const product = await this.#product.findById(productId, true);
 
     if (!product) {
       throw new ResponseError(404, "data not found");
@@ -101,7 +100,7 @@ class ProductService {
     const productImage = await this.#productImage.findById(productId, imageId);
 
     // delete product image from cloud storage
-    await this.#CloudS3.deleteProductImages(productImage.link, false);
+    await awsCloud.deleteProductImages(productImage.link, false);
 
     // delete product image from db
     await this.#productImage.delete(productId, imageId);
@@ -115,11 +114,11 @@ class ProductService {
     }
 
     // delete product images from cloud storage
-    await this.#CloudS3.deleteProductImages(urls, true);
+    await awsCloud.deleteProductImages(urls, true);
 
     // delete product from db
     await this.#product.delete(productId);
   }
 }
 
-export { ProductService };
+export default new ProductService();

@@ -1,4 +1,4 @@
-import { CloudS3 } from "../libs/cloud.s3.js";
+import cloudStorage from "../libs/aws.cloud.js";
 import { ResponseError } from "../utils/error_handler/response.error.js";
 import userValidation from "../utils/validations/user.validation.js";
 import { validate } from "../utils/validations/validate.js";
@@ -7,7 +7,6 @@ import { UserRepository } from "../repositories/user.repository.js";
 
 class UserService {
   #user = new UserRepository();
-  #cloudStorage = new CloudS3();
 
   async getUserDetail(email) {
     return this.#user.findByEmail(email, false);
@@ -65,11 +64,11 @@ class UserService {
 
     // delete old avatar in cloud storage
     if (user.avatar) {
-      await this.#cloudStorage.deleteAvatarUser(user.avatar);
+      await cloudStorage.deleteAvatarUser(user.avatar);
     }
 
     // upload new avatar to cloud storage
-    const url = await this.#cloudStorage.uploadAvatarUser(image);
+    const url = await cloudStorage.uploadAvatarUser(image);
 
     // update avatar url
     await this.#user.updateAvatar(email, url);

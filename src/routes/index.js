@@ -5,13 +5,14 @@ import addressRoutes from "./address.routes.js";
 import cartRoutes from "./cart.routes.js";
 import orderRoutes from "./order.routes.js";
 import adminRoutes from "./admin.routes.js";
+import productRoutes from "./product.routes.js";
 
 const router = Router();
 
 // No Auth
 router.use(authRoutes);
 // Mix (Auth & No Auth)
-
+router.use(productRoutes);
 // Auth
 router.use(adminRoutes);
 router.use(orderRoutes);
